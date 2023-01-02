@@ -594,4 +594,92 @@ OpenJDK 64-Bit Server VM (build 25.352-b08, mixed mode)
 [ashu@ip-172-31-87-240 java-apps]$ 
 ```
 
+### task 2 
+
+```
+[ashu@ip-172-31-87-240 java-apps]$ docker run -itd --name  ashucimg  oraclelinux:8.4  
+af6b7cb8cf7b9b70549a8f31c741e7aa5955bc29d92fd71bae534b49ef97ce9b
+[ashu@ip-172-31-87-240 java-apps]$ docker exec -it ashucimg  bash 
+[root@af6b7cb8cf7b /]# 
+[root@af6b7cb8cf7b /]# yum  install httpd vim -y 
+Oracle Linux 8 BaseOS Latest (x86_64)                                                                  66 MB/s |  53 MB     00:00    
+Oracle Linux 8 Application Stream (x86_64)                                                             70 MB/s |  42 MB     00:00    
+
+
+```
+
+### from container to image
+
+```
+[ashu@ip-172-31-87-240 java-apps]$ docker  commit  ashucimg   ashucimg:v007 
+sha256:0484a0e19d9a676c4b985d72ed2c63a049aa2597270f36e9ab1d579e7f99182f
+[ashu@ip-172-31-87-240 java-apps]$ docker images |  grep ashu
+ashucimg                  v007         0484a0e19d9a   7 seconds ago    517MB
+ashujavaapp               1.1          7ead7b54db2c   34 minutes ago   663MB
+ashujavaapp               1.0          1287fa7acb3d   2 hours ago      467MB
+[ashu@ip-172-31-87-240 java-apps]$ 
+```
+
+### changing restart policy to always 
+
+```
+[ashu@ip-172-31-87-240 java-apps]$ docker  commit  ashucimg   ashucimg:v007 
+sha256:0484a0e19d9a676c4b985d72ed2c63a049aa2597270f36e9ab1d579e7f99182f
+[ashu@ip-172-31-87-240 java-apps]$ docker images |  grep ashu
+ashucimg                  v007         0484a0e19d9a   7 seconds ago    517MB
+ashujavaapp               1.1          7ead7b54db2c   34 minutes ago   663MB
+ashujavaapp               1.0          1287fa7acb3d   2 hours ago      467MB
+[ashu@ip-172-31-87-240 java-apps]$ docker run -itd  --name ashutest1  ashucimg:v007  
+3abc7d7ae2a0dc05dd65611bfbb8c345d526805efb64e06bb8cc8f7ba3ce1850
+[ashu@ip-172-31-87-240 java-apps]$ 
+[ashu@ip-172-31-87-240 java-apps]$ docker  update --restart  always  ashutest1 
+ashutest1
+[ashu@ip-172-31-87-240 java-apps]$ docker  inspect  ashutest1  
+[
+    {
+        "Id": "3abc7d7ae2a0dc05dd65611bfbb8c345d526805efb64e06bb8cc8f7ba3ce1850",
+        "Created": "2023-01-02T10:06:02.451658819Z",
+        "Path": "/bin/bash",
+        "Args": [],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 24846,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2023-01-02T10:06:03.090771581Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:0484a0e19d9a676c4b985d72ed2c63a049aa2597270f36e9ab1d579e7f99182f",
+        "ResolvConfPath": "/var/lib/docker/containers/3abc7d7ae2a0dc05dd65611bfbb8c345d526805efb64e06bb8cc8f7ba3ce1850/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/3abc7d7ae2a0dc05dd65611bfbb8c345d526805efb64e06bb8cc8f7ba3ce1850/hostname",
+        "HostsPath": "/var/lib/docker/containers/3abc7d7ae2a0dc05dd65611bfbb8c345d526805efb64e06bb8cc8f7ba3ce1850/hosts",
+        "LogPath": "/var/lib/docker/containers/3abc7d7ae2a0dc05dd65611bfbb8c345d526805efb64e06bb8cc8f7ba3ce1850/3abc7d7ae2a0dc05dd65611bfbb8c345d526805efb64e06bb8cc8f7ba3ce1850-json.log",
+        "Name": "/ashutest1",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "always",
+                "MaximumRetryCount": 0
+```
+
+
 
