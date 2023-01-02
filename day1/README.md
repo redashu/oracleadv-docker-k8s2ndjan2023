@@ -455,6 +455,17 @@ sibashisjavaapp   1.0       b6b8d780eb4f   20 seconds ago   467MB
 ashujavaapp       1.0       1287fa7acb3d   20 seconds ago   467MB
 ```
 
+### creating container and checking output of java code 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ docker run -itd --name  ashujc1   ashujavaapp:1.0  
+192fa350d27ee02e4996d2a3595258efbeefae99bc4592e7e7c8aade7f56e6f7
+[ashu@ip-172-31-87-240 ashu-apps]$ docker ps
+CONTAINER ID   IMAGE             COMMAND            CREATED         STATUS                  PORTS     NAMES
+39bea9ea13af   anandcode1.0      "java AnandCode"   1 second ago    Up Less than a second             anandC1
+192fa350d27e   ashujavaapp:1.0   "java ashucode"    3 seconds ago   Up 2 seconds                      ashujc1
+```
+
 
 
 
