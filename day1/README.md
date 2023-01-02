@@ -154,6 +154,69 @@ Server:
 
 ```
 
+## some docker operations 
+
+### pulling image from docker hub 
+
+```
+[ashu@ip-172-31-87-240 ~]$ docker  images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+[ashu@ip-172-31-87-240 ~]$ docker  pull oraclelinux:8.4 
+8.4: Pulling from library/oraclelinux
+a4df6f21af84: Pull complete 
+Digest: sha256:b81d5b0638bb67030b207d28586d0e714a811cc612396dbe3410db406998b3ad
+Status: Downloaded newer image for oraclelinux:8.4
+docker.io/library/oraclelinux:8.4
+[ashu@ip-172-31-87-240 ~]$ 
+[ashu@ip-172-31-87-240 ~]$ docker  images
+REPOSITORY    TAG       IMAGE ID       CREATED         SIZE
+oraclelinux   8.4       97e22ab49eea   14 months ago   246MB
+[ashu@ip-172-31-87-240 ~]$ 
+
+
+```
+
+### docker storage database 
+
+<img src="st.png">
+
+
+### exloring ddocker db 
+
+```
+[ashu@ip-172-31-87-240 ~]$ docker  info   |   grep -i root
+ Docker Root Dir: /var/lib/docker
+```
+
+### checking by root user 
+
+```
+[root@ip-172-31-87-240 ~]# whoami
+root
+[root@ip-172-31-87-240 ~]# cd  /var/lib/docker 
+[root@ip-172-31-87-240 docker]# ls
+buildkit  containers  image  network  overlay2  plugins  runtimes  swarm  tmp  trust  volumes
+[root@ip-172-31-87-240 docker]# cd  image/
+[root@ip-172-31-87-240 image]# ls
+overlay2
+[root@ip-172-31-87-240 image]# cd overlay2/
+[root@ip-172-31-87-240 overlay2]# ls
+distribution  imagedb  layerdb  repositories.json
+[root@ip-172-31-87-240 overlay2]# cd imagedb/
+[root@ip-172-31-87-240 imagedb]# ls
+content  metadata
+[root@ip-172-31-87-240 imagedb]# cd content/
+[root@ip-172-31-87-240 content]# ls
+sha256
+[root@ip-172-31-87-240 content]# cd sha256/
+[root@ip-172-31-87-240 sha256]# ls
+97e22ab49eea70a5d500e00980537605d56f30f9614b3a6d6c4ae9ddbd642489
+[root@ip-172-31-87-240 sha256]# 
+
+
+```
+
+
 
 
 
