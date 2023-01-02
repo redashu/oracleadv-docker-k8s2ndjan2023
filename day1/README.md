@@ -466,6 +466,79 @@ CONTAINER ID   IMAGE             COMMAND            CREATED         STATUS      
 192fa350d27e   ashujavaapp:1.0   "java ashucode"    3 seconds ago   Up 2 seconds                      ashujc1
 ```
 
+### accessing container shell to check kernel version 
+
+```
+ashu@ip-172-31-87-240 ashu-apps]$ docker  exec -it ashujc1  bash 
+bash-4.4# 
+bash-4.4# 
+bash-4.4# uname -r
+5.10.157-139.675.amzn2.x86_64
+```
+
+### checking file system 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ docker  exec -it ashujc1  bash 
+bash-4.4# 
+bash-4.4# 
+bash-4.4# uname -r
+5.10.157-139.675.amzn2.x86_64
+bash-4.4# 
+bash-4.4# 
+bash-4.4# cd  /mycode/
+bash-4.4# ls
+ashucode.class  ashucode.java
+bash-4.4# ls /
+bin  boot  dev  etc  home  lib  lib64  media  mnt  mycode  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+bash-4.4# 
+```
+
+### checking resources 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ docker  stats  ashujc1 
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O   PIDS
+192fa350d27e   ashujc1   0.08%     10.25MiB / 7.76GiB   0.13%     1.21kB / 0B   0B / 0B     19
+```
+
+### checking container output 
+
+```
+86  docker  logs   ashujc1   
+   87  docker  logs   ashujc1   -f
+```
+
+
+### stop and start 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ docker  stop ashujc1 
+ashujc1
+[ashu@ip-172-31-87-240 ashu-apps]$ docker ps
+CONTAINER ID   IMAGE                 COMMAND               CREATED          STATUS          PORTS     NAMES
+c092f234aef1   sivajavaapp:1.1       "java sivaclass"      3 minutes ago    Up 3 minutes              s2
+43bd519e76bc   anandcode:1.0         "java AnandCode"      9 minutes ago    Up 9 minutes              anandC2
+6d059a4afd74   59e7c03a5108          "java ankitacode"     13 minutes ago   Up 13 minutes             ankt1
+eea663e458ce   shalesh:javaapp1.0    "java Shailesh"       17 minutes ago   Up 17 minutes             shailesh_j
+93b6ceab69f6   nishantjavaapp:1.0    "java nishantcode"    17 minutes ago   Up 17 minutes             nishantc1
+ee4880de7c4f   sudeephello:1.0       "java Hello"          17 minutes ago   Up 17 minutes             sudeepx1
+27bfaa086090   saurabh:1.0           "java HelloWorld"     17 minutes ago   Up 17 minutes             saurabhc1
+812ff018142d   sibashisjavaapp:1.0   "java Sibashiscode"   19 minutes ago   Up 19 minutes             sibashisjc1
+[ashu@ip-172-31-87-240 ashu-apps]$ docker  start  ashujc1 
+ashujc1
+[ashu@ip-172-31-87-240 ashu-apps]$ docker ps
+CONTAINER ID   IMAGE                 COMMAND               CREATED          STATUS          PORTS     NAMES
+c092f234aef1   sivajavaapp:1.1       "java sivaclass"      3 minutes ago    Up 3 minutes              s2
+43bd519e76bc   anandcode:1.0         "java AnandCode"      9 minutes ago    Up 9 minutes              anandC2
+6d059a4afd74   59e7c03a5108          "java ankitacode"     13 minutes ago   Up 13 minutes             ankt1
+93b6ceab69f6   nishantjavaapp:1.0    "java nishantcode"    17 minutes ago   Up 17 minutes             nishantc1
+ee4880de7c4f   sudeephello:1.0       "java Hello"          17 minutes ago   Up 17 minutes             sudeepx1
+27bfaa086090   saurabh:1.0           "java HelloWorld"     17 minutes ago   Up 17 minutes             saurabhc1
+812ff018142d   sibashisjavaapp:1.0   "java Sibashiscode"   19 minutes ago   Up 19 minutes             sibashisjc1
+192fa350d27e   ashujavaapp:1.0       "java ashucode"       19 minutes ago   Up 2 seconds              ashujc1
+```
+
 
 
 
