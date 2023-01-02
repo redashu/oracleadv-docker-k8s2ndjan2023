@@ -539,6 +539,59 @@ ee4880de7c4f   sudeephello:1.0       "java Hello"          17 minutes ago   Up 1
 192fa350d27e   ashujavaapp:1.0       "java ashucode"       19 minutes ago   Up 2 seconds              ashujc1
 ```
 
+### using custom dockerfile for custom JDK version 
 
+```
+FROM oraclelinux:8.4 
+LABEL email=ashutoshh@linux.com 
+RUN yum install java-1.8.0-openjdk.x86_64 java-1.8.0-openjdk-devel.x86_64 -y 
+RUN mkdir /mycode 
+ADD ashucode.java /mycode/
+WORKDIR /mycode
+RUN javac ashucode.java
+CMD ["java","ashucode"]
+
+```
+
+### lets build it 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ ls
+db-apps  java-apps  node-app
+[ashu@ip-172-31-87-240 ashu-apps]$ cd java-apps/
+[ashu@ip-172-31-87-240 java-apps]$ ls
+ashucode.java  Dockerfile  jdk8.dockerfile
+[ashu@ip-172-31-87-240 java-apps]$ docker build  -t  ashujavaapp:1.1  -f  jdk8.dockerfile  .  
+Sending build context to Docker daemon  4.608kB
+Step 1/8 : FROM oraclelinux:8.4
+ ---> 97e22ab49eea
+Step 2/8 : LABEL email=ashutoshh@linux.com
+ ---> Running in ce6f2ff3665e
+Removing intermediate container ce6f2ff3665e
+ ---> 6ed7db7fc074
+Step 3/8 : RUN yum install java-1.8.0-openjdk.x86_64 java-1.8.0-openjdk-devel.x86_64 -y
+ ---> Running in bed0a65a9d8a
+Oracle Linux 8 BaseOS Latest (x86_64)            75 MB/s |  53 MB     00:00    
+
+
+```
+
+### creating container 
+
+```
+[ashu@ip-172-31-87-240 java-apps]$ docker  run -itd --name ashujc2  ashujavaapp:1.1
+dff07067c89ed0042d924c72c46f866b0d4754bd769bf0ed06edaaee7aed210b
+[ashu@ip-172-31-87-240 java-apps]$ docker ps
+CONTAINER ID   IMAGE             COMMAND           CREATED         STATUS         PORTS     NAMES
+dff07067c89e   ashujavaapp:1.1   "java ashucode"   4 seconds ago   Up 3 seconds             ashujc2
+0e429b89cb5a   oraclelinux:8.4   "bash"            5 minutes ago   Up 5 minutes             youthful_burnell
+[ashu@ip-172-31-87-240 java-apps]$ docker  exec -it  ashujc2 bash 
+[root@dff07067c89e mycode]# java -version 
+openjdk version "1.8.0_352"
+OpenJDK Runtime Environment (build 1.8.0_352-b08)
+OpenJDK 64-Bit Server VM (build 25.352-b08, mixed mode)
+[root@dff07067c89e mycode]# exit
+[ashu@ip-172-31-87-240 java-apps]$ 
+```
 
 
