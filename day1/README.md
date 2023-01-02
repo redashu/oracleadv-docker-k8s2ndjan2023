@@ -309,6 +309,28 @@ boot  etc  home		lib64  mnt    proc  run   srv	tmp  var
 
 ```
 
+### remove container 
+
+```
+[ashu@ip-172-31-87-240 ~]$ docker  rm  ashuc1
+Error response from daemon: You cannot remove a running container 5c2487a940c42fd2d0cca5caad056e4e30769fda94cb526ce6001c4ff57538e7. Stop the container before attempting removal or force remove
+[ashu@ip-172-31-87-240 ~]$ docker  stop  ashuc1 
+ashuc1
+[ashu@ip-172-31-87-240 ~]$ docker  rm  ashuc1
+ashuc1
+
+```
+
+### removing image 
+
+```
+[ashu@ip-172-31-87-240 ~]$ docker rmi  openjdk:8 
+Untagged: openjdk:8
+Untagged: openjdk@sha256:86e863cc57215cfb181bd319736d0baf625fe8f150577f9eb58bd937f5452cb8
+[ashu@ip-172-31-87-240 ~]$ 
+```
+
+
 
 
 
