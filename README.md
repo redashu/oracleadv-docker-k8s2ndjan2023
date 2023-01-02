@@ -1,1 +1,4 @@
-# oracleadv-docker-k8s2ndjan2023
+## Training plan for advanced docker & k8s 
+
+<img src="plan.png">
+
