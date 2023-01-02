@@ -681,5 +681,52 @@ ashutest1
                 "MaximumRetryCount": 0
 ```
 
+### Introduction to container registry 
+
+<img src="reg.png">
+
+### Understanding container registry management 
+
+<img src="reg1.png">
+
+### pushing image to docker hub 
+
+```
+[ashu@ip-172-31-87-240 java-apps]$ docker  images    |   grep ashu
+ashucimg                   v007         0484a0e19d9a   55 minutes ago      517MB
+ashujavaapp                1.1          7ead7b54db2c   About an hour ago   663MB
+ashujavaapp                1.0          1287fa7acb3d   3 hours ago         467MB
+[ashu@ip-172-31-87-240 java-apps]$ 
+[ashu@ip-172-31-87-240 java-apps]$ 
+[ashu@ip-172-31-87-240 java-apps]$ docker  tag   ashujavaapp:1.0   docker.io/dockerashu/ashu2023java:v1 
+[ashu@ip-172-31-87-240 java-apps]$ docker login 
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: dockerashu
+Password: 
+WARNING! Your password will be stored unencrypted in /home/ashu/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+[ashu@ip-172-31-87-240 java-apps]$ docker push  docker.io/dockerashu/ashu2023java:v1
+The push refers to repository [docker.io/dockerashu/ashu2023java]
+067f9e827e22: Pushed 
+7bde9abf81b5: Pushed 
+051b7f4be9b0: Pushed 
+3a5e32c10138: Mounted from library/openjdk 
+28866bc7fd08: Mounted from library/openjdk 
+d3cc7b6aa7bc: Mounted from library/openjdk 
+v1: digest: sha256:a0a9b0a8c2c393fee6377730bf0933c16303ca625534337843851d5a87b2a822 size: 1575
+[ashu@ip-172-31-87-240 java-apps]$ 
+
+
+```
+
+### logout 
+
+```
+[ashu@ip-172-31-87-240 java-apps]$ docker logout 
+Removing login credentials for https://index.docker.io/v1/
+```
 
 
