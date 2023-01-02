@@ -730,3 +730,36 @@ Removing login credentials for https://index.docker.io/v1/
 ```
 
 
+### pushing to OCIR 
+
+```
+[ashu@ip-172-31-87-240 java-apps]$ docker  tag   ashujavaapp:1.0   phx.ocir.io/ax8yv0ztaclr/oraclejava:ashuv1 
+[ashu@ip-172-31-87-240 java-apps]$ 
+
+====
+ashu@ip-172-31-87-240 java-apps]$ docker login  phx.ocir.io  -u  ax8yv0ztaclr/thexyzcompany2022@gmail.com 
+Password: 
+WARNING! Your password will be stored unencrypted in /home/ashu/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+
+====
+[ashu@ip-172-31-87-240 java-apps]$ docker push  phx.ocir.io/ax8yv0ztaclr/oraclejava:ashuv1
+The push refers to repository [phx.ocir.io/ax8yv0ztaclr/oraclejava]
+067f9e827e22: Pushed 
+7bde9abf81b5: Pushed 
+051b7f4be9b0: Pushed 
+3a5e32c10138: Pushed 
+28866bc7fd08: Pushed 
+d3cc7b6aa7bc: Pushed 
+ashuv1: digest: sha256:a0a9b0a8c2c393fee6377730bf0933c16303ca625534337843851d5a87b2a822 size: 1575
+[ashu@ip-172-31-87-240 java-apps]$ 
+=======
+
+[ashu@ip-172-31-87-240 java-apps]$ docker logout   phx.ocir.io   
+Removing login credentials for phx.ocir.io
+[ashu@ip-172-31-87-240 java-apps]$ 
+
+```
