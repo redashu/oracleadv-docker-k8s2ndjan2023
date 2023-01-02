@@ -217,6 +217,99 @@ sha256
 ```
 
 
+### pulling image without any tag 
+
+```
+[ashu@ip-172-31-87-240 lib]$ docker pull mysql
+Using default tag: latest
+latest: Pulling from library/mysql
+0ed027b72ddc: Pull complete 
+0296159747f1: Pull complete 
+3d2f9b664bd3: Pull complete 
+df6519f81c26: Pull complete 
+36bb5e56d458: Pull complete 
+054e8fde88d0: Pull complete 
+f2b494c50c7f: Pull complete 
+132bc0d471b8: Pull complete 
+135ec7033a05: Pull complete 
+5961f0272472: Pull complete 
+75b5f7a3d3a4: Pull complete 
+Digest: sha256:3d7ae561cf6095f6aca8eb7830e1d14734227b1fb4748092f2be2cfbccf7d614
+Status: Downloaded newer image for mysql:latest
+docker.io/library/mysql:latest
+[ashu@ip-172-31-87-240 lib]$ docker  images
+REPOSITORY    TAG       IMAGE ID       CREATED         SIZE
+mysql         latest    7484689f290f   3 weeks ago     538MB
+mysql         5.6       dd3b2a5dcb48   12 months ago   303MB
+oraclelinux   8.4       97e22ab49eea   14 months ago   246MB
+[ashu@ip-172-31-87-240 lib]$ 
+```
+
+### task 1 
+
+### creating first container 
+
+```
+[ashu@ip-172-31-87-240 ~]$ docker run  -it -d  --name ashuc1  oraclelinux:8.4  bash 
+5c2487a940c42fd2d0cca5caad056e4e30769fda94cb526ce6001c4ff57538e7
+[ashu@ip-172-31-87-240 ~]$ docker  ps
+CONTAINER ID   IMAGE             COMMAND              CREATED         STATUS         PORTS                                   NAMES
+5c2487a940c4   oraclelinux:8.4   "bash"               3 seconds ago   Up 2 seconds                                           ashuc1
+```
+
+### access running container using exec 
+
+```
+[ashu@ip-172-31-87-240 ~]$ docker  exec  -it  ashuc1  bash 
+[root@5c2487a940c4 /]# 
+[root@5c2487a940c4 /]# pwd
+/
+[root@5c2487a940c4 /]# echo  "hello oracle guys "  >helloc1.txt 
+[root@5c2487a940c4 /]# ls
+bin  boot  dev  etc  helloc1.txt  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+[root@5c2487a940c4 /]# exit
+exit
+
+```
+
+### copy data from container to host then host to container 
+
+```
+[ashu@ip-172-31-87-240 ~]$ whoami
+ashu
+[ashu@ip-172-31-87-240 ~]$ pwd
+/home/ashu
+[ashu@ip-172-31-87-240 ~]$ ls
+[ashu@ip-172-31-87-240 ~]$ docker  ps
+CONTAINER ID   IMAGE             COMMAND                  CREATED          STATUS          PORTS                                   NAMES
+2c92657962aa   oraclelinux:8.4   "bash"                   6 minutes ago    Up 5 minutes                                            anandc2
+3b3c3afab46e   mysql             "docker-entrypoint.s…"   8 minutes ago    Up 8 minutes    3306/tcp, 33060/tcp                     ankita1c2
+d1277f19b5c9   saurabhc1         "bash"                   8 minutes ago    Up 8 minutes                                            saurabhc2
+efc17d226056   mysql             "docker-entrypoint.s…"   8 minutes ago    Up 8 minutes    3306/tcp, 33060/tcp                     ankita1c1
+b12f21286746   saurabhc1         "bash"                   8 minutes ago    Up 8 minutes                                            saurabhc1
+2e517a23de20   oraclelinux:8.4   "bash"                   9 minutes ago    Up 9 minutes                                            sivac2
+1312436fdaf0   oraclelinux:8.4   "bash"                   9 minutes ago    Up 9 minutes                                            sivac1
+4c045ad94c52   oraclelinux:8.4   "bash"                   9 minutes ago    Up 9 minutes                                            ashuc2
+1a613034ce92   busybox           "/bin/sh"                10 minutes ago   Up 9 minutes                                            sibashisc2
+5c2487a940c4   oraclelinux:8.4   "bash"                   10 minutes ago   Up 10 minutes                                           ashuc1
+fec727b7b406   busybox           "/bin/sh"                10 minutes ago   Up 10 minutes                                           sibashisc1
+6b76de733ee3   httpd:2.4         "httpd-foreground"       13 minutes ago   Up 13 minutes   0.0.0.0:8080->80/tcp, :::8080->80/tcp   sudeepc3
+974d00ba2046   alpine            "/bin/sh"                18 minutes ago   Up 16 minutes                                           anandC1
+0ebafbd37715   busybox           "sh"                     19 minutes ago   Up 6 minutes                                            shaileshc2
+c5e014675b09   busybox           "sh"                     20 minutes ago   Up 6 minutes                                            shaileshc1
+[ashu@ip-172-31-87-240 ~]$ docker  cp   ashuc1:/helloc1.txt   /home/ashu 
+[ashu@ip-172-31-87-240 ~]$ ls
+helloc1.txt
+[ashu@ip-172-31-87-240 ~]$ docker  cp  helloc1.txt  ashuc2:/  
+[ashu@ip-172-31-87-240 ~]$ 
+[ashu@ip-172-31-87-240 ~]$ docker  exec -it  ashuc2  ls  /
+bin   dev  helloc1.txt	lib    media  opt   root  sbin	sys  usr
+boot  etc  home		lib64  mnt    proc  run   srv	tmp  var
+[ashu@ip-172-31-87-240 ~]$ 
+
+```
+
+
 
 
 
