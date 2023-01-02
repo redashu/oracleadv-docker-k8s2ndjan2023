@@ -763,3 +763,8 @@ Removing login credentials for phx.ocir.io
 [ashu@ip-172-31-87-240 java-apps]$ 
 
 ```
+
+### Docker image to OCIR 
+
+<img src="ocir.png">
+
