@@ -330,7 +330,130 @@ Untagged: openjdk@sha256:86e863cc57215cfb181bd319736d0baf625fe8f150577f9eb58bd93
 [ashu@ip-172-31-87-240 ~]$ 
 ```
 
+## app containerization 
 
+<img src="appcont.png">
+
+### after connecting to vscode we are creating directory structure 
+
+```
+[ashu@ip-172-31-87-240 ~]$ pwd
+/home/ashu
+[ashu@ip-172-31-87-240 ~]$ ls
+helloc1.txt
+[ashu@ip-172-31-87-240 ~]$ mkdir ashu-apps 
+[ashu@ip-172-31-87-240 ~]$ ls
+ashu-apps  helloc1.txt
+[ashu@ip-172-31-87-240 ~]$ cd  ashu-apps/
+[ashu@ip-172-31-87-240 ashu-apps]$ ls
+[ashu@ip-172-31-87-240 ashu-apps]$ mkdir  java-apps  node-app  db-apps  
+[ashu@ip-172-31-87-240 ashu-apps]$ ls
+db-apps  java-apps  node-app
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+```
+
+## Dockerfiles example 
+
+### java sample code example 
+
+### code 
+
+```
+class ashucode { 
+    public static void main(String args[]) 
+    { 
+        // test expression 
+        while (true) { 
+            System.out.println("Hello World, i am ashutoshh singh ! \n"); 
+            try {
+                Thread.sleep(2000);
+            } catch (Exception ex) {
+                // Ignored
+            }
+  
+            // update expression 
+        } 
+    } 
+} 
+
+```
+
+### Dockerfile 
+
+```
+FROM openjdk 
+# asking docker engine / daemon to pull above image from docker hub 
+LABEL name=ashutosh
+LABEL email=ashutoshh@linux.com 
+# optional field but to share image creator info 
+RUN mkdir /mycode 
+# to run any command inside image during build time 
+COPY ashucode.java /mycode/
+WORKDIR /mycode
+# changing directory during image build time
+RUN javac ashucode.java
+#  javac is command for compiling java code 
+CMD ["java","ashucode"]
+# use of CMD is to set default process for container image 
+```
+
+### lets build it 
+
+```
+ashu@ip-172-31-87-240 ashu-apps]$ pwd
+/home/ashu/ashu-apps
+[ashu@ip-172-31-87-240 ashu-apps]$ ls
+db-apps  java-apps  node-app
+[ashu@ip-172-31-87-240 ashu-apps]$ docker build  -t  ashujavaapp:1.0   java-apps/ 
+Sending build context to Docker daemon  3.584kB
+Step 1/8 : FROM openjdk
+latest: Pulling from library/openjdk
+0ed027b72ddc: Already exists 
+3502f40d35be: Pull complete 
+a27d2c7acde8: Pull complete 
+Digest: sha256:fbddf9af4d18110cfbd80e8cd89fd7503c5bd784d6ffb207b53c95f0dcac77a7
+Status: Downloaded newer image for openjdk:latest
+ ---> be9017b1d8c5
+Step 2/8 : LABEL name=ashutosh
+ ---> Running in b81cf15393cd
+Removing intermediate container b81cf15393cd
+ ---> 684ae759647c
+Step 3/8 : LABEL email=ashutoshh@linux.com
+ ---> Running in 0a7b363c3fd7
+Removing intermediate container 0a7b363c3fd7
+ ---> 7583e5ac40b0
+Step 4/8 : RUN mkdir /mycode
+ ---> Running in eac0ce20daad
+Removing intermediate container eac0ce20daad
+ ---> 0a5b5257a4fb
+Step 5/8 : COPY ashucode.java /mycode/
+ ---> 1245ad6fe752
+Step 6/8 : WORKDIR /mycode
+ ---> Running in 46ef11f3cc32
+Removing intermediate container 46ef11f3cc32
+ ---> b0e3f05e51eb
+Step 7/8 : RUN javac ashucode.java
+ ---> Running in 439e2b5d0d26
+Removing intermediate container 439e2b5d0d26
+ ---> 3a694b784144
+Step 8/8 : CMD ["java","ashucode"]
+ ---> Running in b671f50f121a
+Removing intermediate container b671f50f121a
+ ---> 1287fa7acb3d
+Successfully built 1287fa7acb3d
+Successfully tagged ashujavaapp:1.0
+```
+
+### verify it 
+
+```
+ashu@ip-172-31-87-240 ashu-apps]$ docker images
+REPOSITORY        TAG       IMAGE ID       CREATED          SIZE
+ankitajavaapp     1.0       59e7c03a5108   15 seconds ago   467MB
+sudeephello       1.0       30f60fbc4aac   18 seconds ago   467MB
+sibashisjavaapp   1.0       b6b8d780eb4f   20 seconds ago   467MB
+ashujavaapp       1.0       1287fa7acb3d   20 seconds ago   467MB
+```
 
 
 
