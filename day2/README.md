@@ -469,6 +469,29 @@ round-trip min/avg/max = 0.085/0.087/0.089 ms
 
 <img src="brc.png">
 
+### more command 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ docker network ls
+NETWORK ID     NAME      DRIVER    SCOPE
+de1297431794   ashubr1   bridge    local
+7cd95c087527   ashubr2   bridge    local
+9a123e28b2bd   bridge    bridge    local
+fb0f31866eb8   host      host      local
+f05a4d83cf7c   none      null      local
+[ashu@ip-172-31-87-240 ashu-apps]$ docker network prune 
+WARNING! This will remove all custom networks not used by at least one container.
+Are you sure you want to continue? [y/N] y
+Deleted Networks:
+ashubr1
+ashubr2
+
+[ashu@ip-172-31-87-240 ashu-apps]$ docker network ls
+NETWORK ID     NAME      DRIVER    SCOPE
+9a123e28b2bd   bridge    bridge    local
+fb0f31866eb8   host      host      local
+f05a4d83cf7c   none      null      local
+```
 
 
 
