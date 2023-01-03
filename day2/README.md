@@ -879,6 +879,47 @@ bash-4.4# exit
 exit
 ```
 
+### MYSQL container + with volume _ with network using compose 
+
+```
+version: '3.8'
+volumes: # creating volume 
+  ashu-db-vol2: # name of volume 
+networks: # for creating network 
+  ashubr-net: # name of network bridge 
+services:
+  ashudb-app:
+    image: mysql
+    container_name: ashudbc1
+    volumes: # mounting volume 
+    - "ashu-db-vol2:/var/lib/mysql/"
+    environment: # setting mysql root user password 
+      MYSQL_ROOT_PASSWORD: "Oracle@098"
+    networks: # using bridge 
+    - ashubr-net 
+
+
+```
+
+### running it 
+
+```
+[ashu@ip-172-31-87-240 ashu-compose]$ ls
+docker-compose.yaml  mysql.yaml
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  -f  mysql.yaml  up -d 
+[+] Running 3/3
+ ⠿ Network ashu-compose_ashubr-net     Created                                                                                0.0s
+ ⠿ Volume "ashu-compose_ashu-db-vol2"  Created                                                                                0.0s
+ ⠿ Container ashudbc1                  Started                                                                                0.6s
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  -f mysql.yaml  ps
+NAME                IMAGE               COMMAND                  SERVICE             CREATED             STATUS              PORTS
+ashudbc1            mysql               "docker-entrypoint.s…"   ashudb-app          15 seconds ago      Up 14 seconds       3306/tcp, 33060/tcp
+[ashu@ip-172-31-87-240 ashu-compose]$ 
+
+
+```
+
+
 
 
 
