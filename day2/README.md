@@ -636,6 +636,86 @@ ashuct1             alpine              "sleep 1000"
  ⠿ Network ashu-compose_default  Removed  
 ```
 
+### Example 3 
+
+```
+version:  '3.8' # compose file version i am gonna use 
+services: # all your micro services components
+  ashu-java-test:
+    build: 
+      context: ../java-apps
+      dockerfile: Dockerfile
+    image: ashujava:composev1 # image i want to build 
+    container_name: ashujc1 
+  ashu-test-app:
+    image: alpine
+    container_name: ashuct1
+    command: sleep 1000
+    restart: always # restart policy of container 
+  ashu-ui-app: # name of service 
+    image: ashunginx:appv1 
+    container_name: ashu-ui-c1
+    ports:
+    - "1234:80"
+  
+```
+
+### run it 
+
+```
+ashu@ip-172-31-87-240 ashu-compose]$ ls
+docker-compose.yaml
+[ashu@ip-172-31-87-240 ashu-compo
+[ashu@ip-172-31-87-240 ashu-compose]$ 
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  up -d --build 
+[+] Building 3.7s (10/10) FINISHED                                                                                                 
+ => [internal] load build definition from Dockerfile                                                                          0.0s
+ => => transferring dockerfile: 599B                                                                                          0.0s
+ => [internal] load .dockerignore                                                                                             0.0s
+ => => transferring context: 2B                                                                                               0.0s
+ => [internal] load metadata for docker.io/library/openjdk:latest                                                             0.0s
+ => [1/5] FROM docker.io/library/openjdk                                                                                      0.1s
+ => [internal] load build context                                                                                             0.1s
+ => => transferring context: 427B                                                                                             0.0s
+ => [2/5] RUN mkdir /mycode                                                                                                   0.8s
+ => [3/5] COPY ashucode.java /mycode/                                                                                         0.1s
+ => [4/5] WORKDIR /mycode                                                                                                     0.0s
+ => [5/5] RUN javac ashucode.java                                                                                             2.5s
+ => exporting to image                                                                                                        0.1s
+ => => exporting layers                                                                                                       0.1s
+ => => writing image sha256:a7cac9ed3aac490064501377b4e5cab0c5f91d9f798402796b662ba61f6498ce                                  0.0s
+ => => naming to docker.io/library/ashujava:composev1                                                                         0.0s
+[+] Running 4/4
+ ⠿ Network ashu-compose_default  Created                                                                                      0.1s
+ ⠿ Container ashu-ui-c1          Started                                                                                      1.7s
+ ⠿ Container ashujc1             Started                                                                                      1.4s
+ ⠿ Container ashuct1             Started      
+```
+
+### few commands 
+
+```
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  stop   ashu-java-test
+[+] Running 1/1
+ ⠿ Container ashujc1  Stopped                                                                                                                                                                 0.2s
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  ps
+NAME                IMAGE               COMMAND                  SERVICE             CREATED              STATUS              PORTS
+ashu-ui-c1          ashunginx:appv1     "/docker-entrypoint.…"   ashu-ui-app         About a minute ago   Up About a minute   0.0.0.0:1234->80/tcp, :::1234->80/tcp
+ashuct1             alpine              "sleep 1000"             ashu-test-app       About a minute ago   Up About a minute   
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  ps -a
+NAME                IMAGE                COMMAND                  SERVICE             CREATED              STATUS                       PORTS
+ashu-ui-c1          ashunginx:appv1      "/docker-entrypoint.…"   ashu-ui-app         About a minute ago   Up About a minute            0.0.0.0:1234->80/tcp, :::1234->80/tcp
+ashuct1             alpine               "sleep 1000"             ashu-test-app       About a minute ago   Up About a minute            
+ashujc1             ashujava:composev1   "java ashucode"          ashu-java-test      About a minute ago   Exited (143) 9 seconds ago   
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  start  ashu-java-test
+[+] Running 1/1
+ ⠿ Container ashujc1  Started                                                                                                                                                                 0.5s
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  ps
+NAME                IMAGE                COMMAND                  SERVICE             CREATED              STATUS              PORTS
+ashu-ui-c1          ashunginx:appv1      "/docker-entrypoint.…"   ashu-ui-app         About a minute ago   Up About a minute   0.0.0.0:1234->80/tcp, :::1234->80/tcp
+ashuct1             alpine               "sleep 1000"             ashu-test-app       About a minute ago   Up About a minute   
+ashujc1             ashujava:composev1   "java ashucode"  
+```
 
 
 
