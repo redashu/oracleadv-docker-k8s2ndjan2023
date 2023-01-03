@@ -568,6 +568,76 @@ root@9a823384268c:/# exit
 exit
 ```
 
+### adding more service to compose 
+
+```
+version:  '3.8' # compose file version i am gonna use 
+services: # all your micro services components
+  ashu-test-app:
+    image: alpine
+    container_name: ashuct1
+    command: sleep 1000
+    restart: always # restart policy of container 
+  ashu-ui-app: # name of service 
+    image: ashunginx:appv1 
+    container_name: ashu-ui-c1
+    ports:
+    - "1234:80"
+  
+```
+
+### lets rerun it 
+
+```
+ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  ps
+NAME                IMAGE               COMMAND                  SERVICE             CREATED             STATUS              PORTS
+ashu-ui-c1          ashunginx:appv1     "/docker-entrypoint.…"   ashu-ui-app         5 minutes ago       Up 2 minutes        0.0.0.0:1234->80/tcp, :::1234->80/tcp
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  up -d
+[+] Running 2/2
+ ⠿ Container ashuct1     Started                                                                                                                          0.5s
+ ⠿ Container ashu-ui-c1  Running                                                                                                                          0.0s
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  ps
+NAME                IMAGE               COMMAND                  SERVICE             CREATED             STATUS              PORTS
+ashu-ui-c1          ashunginx:appv1     "/docker-entrypoint.…"   ashu-ui-app         6 minutes ago       Up 2 minutes        0.0.0.0:1234->80/tcp, :::1234->80/tcp
+ashuct1             alpine              "sleep 1000"             ashu-test-app       10 seconds ago      Up 9 seconds        
+[ashu@ip-172-31-87-240 ashu-compose]$ 
+```
+
+### more comamnds 
+
+```
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  stop 
+[+] Running 2/2
+ ⠿ Container ashuct1     Stopped                                                                                                                         10.2s
+ ⠿ Container ashu-ui-c1  Stopped                                                                                                                          0.2s
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  ps
+NAME                IMAGE               COMMAND             SERVICE             CREATED             STATUS              PORTS
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  ps -a
+NAME                IMAGE               COMMAND                  SERVICE             CREATED             STATUS                        PORTS
+ashu-ui-c1          ashunginx:appv1     "/docker-entrypoint.…"   ashu-ui-app         7 minutes ago       Exited (0) 21 seconds ago     
+ashuct1             alpine              "sleep 1000"             ashu-test-app       2 minutes ago       Exited (137) 11 seconds ago   
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  start
+[+] Running 2/2
+ ⠿ Container ashuct1     Started                                                                                                                          0.8s
+ ⠿ Container ashu-ui-c1  Started                                                                                                                          0.7s
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  ps
+NAME                IMAGE               COMMAND                  SERVICE             CREATED             STATUS              PORTS
+ashu-ui-c1          ashunginx:appv1     "/docker-entrypoint.…"   ashu-ui-app         8 minutes ago       Up 5 seconds        0.0.0.0:1234->80/tcp, :::1234->80/tcp
+ashuct1             alpine              "sleep 1000"
+```
+
+### lets clean up 
+
+```
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  down 
+[+] Running 3/3
+ ⠿ Container ashu-ui-c1          Removed                                                                                                                  0.2s
+ ⠿ Container ashuct1             Removed                                                                                                                 10.2s
+ ⠿ Network ashu-compose_default  Removed  
+```
+
+
+
 
 
 
