@@ -717,6 +717,83 @@ ashuct1             alpine               "sleep 1000"             ashu-test-app 
 ashujc1             ashujava:composev1   "java ashucode"  
 ```
 
+### Introduction to docker storage 
+
+<img src="st.png">
+
+### storage for engine 
+
+<img src="st1.png">
+
+### creating xfs filesystem and mounting for external storage 
+
+```
+[root@ip-172-31-87-240 ~]# lsblk 
+NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+xvda    202:0    0   50G  0 disk 
+`-xvda1 202:1    0   50G  0 part /
+xvdf    202:80   0  500G  0 disk 
+[root@ip-172-31-87-240 ~]# mkfs.xfs   /dev/xvdf 
+meta-data=/dev/xvdf              isize=512    agcount=4, agsize=32768000 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=1, sparse=1, rmapbt=0
+         =                       reflink=1    bigtime=0 inobtcount=0
+data     =                       bsize=4096   blocks=131072000, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+log      =internal log           bsize=4096   blocks=64000, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+[root@ip-172-31-87-240 ~]# mkdir  /opt/docker
+[root@ip-172-31-87-240 ~]# mount  /dev/xvdf  /opt/docker/
+[root@ip-172-31-87-240 ~]# vim /etc/fstab 
+[root@ip-172-31-87-240 ~]# mount -a
+[root@ip-172-31-87-240 ~]# 
+
+```
+
+### lets configure docker to use it 
+
+```
+root@ip-172-31-87-240 ~]# cat  /etc/sysconfig/docker
+# The max number of open files for the daemon itself, and all
+# running containers.  The default value of 1048576 mirrors the value
+# used by the systemd service unit.
+DAEMON_MAXFILES=1048576
+
+# Additional startup options for the Docker daemon, for example:
+# OPTIONS="--ip-forward=true --iptables=true"
+# By default we limit the number of open files per container
+OPTIONS="--default-ulimit nofile=32768:65536  -g  /opt/docker/"
+
+
+```
+
+====
+
+```
+ 80  systemctl daemon-reload 
+   81  systemctl restart docker
+```
+
+### check it 
+
+```
+[root@ip-172-31-87-240 ~]# docker info   |   grep -i root
+ Docker Root Dir: /opt/docker
+```
+
+### now no old data will be available because all the data is in /var/lib/docker
+
+### lets transfer it 
+
+```
+ rsync  -avp  /var/lib/docker/   /opt/docker/
+ systemctl restart docker 
+```
+
+
+
 
 
 
