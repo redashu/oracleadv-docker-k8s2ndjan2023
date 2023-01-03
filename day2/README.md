@@ -25,5 +25,44 @@ e49f9fbb7b33   ashualp:pycodev1   "/bin/sh -c 'python3…"   About a minute ago 
 
 ```
 
+## Understanding Cgroups 
+
+<img src="cg.png">
+
+### creating container with no memory boundry 
+
+```
+[ashu@ip-172-31-87-240 tasks]$ docker run -itd --name ashuc1 alpine sleep 1000 
+44453d8e2e18961b8bd0ef63a0295b9e353d2b3a02cce0f1f35b06b2a6b7955e
+[ashu@ip-172-31-87-240 tasks]$ docker ps
+CONTAINER ID   IMAGE     COMMAND        CREATED         STATUS         PORTS     NAMES
+44453d8e2e18   alpine    "sleep 1000"   3 seconds ago   Up 2 seconds             ashuc1
+[ashu@ip-172-31-87-240 tasks]$ 
+```
+
+### with RAM limit 
+
+```
+[ashu@ip-172-31-87-240 tasks]$ docker run -itd --name ashuc2 --memory 200M  alpine sleep 1000 
+5e2b95b317d9164675a86e46c7d23f4359963153b189a3b194ce6dc85532b5c0
+[ashu@ip-172-31-87-240 tasks]$ 
+```
+
+### CPU 
+
+<img src="cpu.png">
+
+
+```
+[ashu@ip-172-31-87-240 tasks]$ docker run -itd --name ashuc2 --memory 200M   --cpuset-cpus=0 --cpu-shares=300     alpine sleep 1000 
+f68589ea8163396736bdc94492fc35c66e85b3f825fa55db32bb0a39bf5f7373
+[ashu@ip-172-31-87-240 tasks]$ docker ps
+CONTAINER ID   IMAGE     COMMAND        CREATED         STATUS         PORTS     NAMES
+f68589ea8163   alpine    "sleep 1000"   4 seconds ago   Up 3 seconds             ashuc2
+[ashu@ip-172-31-87-240 tasks]$ 
+
+```
+
+
 
 
