@@ -428,6 +428,48 @@ eth0      Link encap:Ethernet  HWaddr 12:C6:F8:D1:44:53
           RX bytes:511541454 (487.8 MiB)  TX bytes:68972414 (65.7 MiB)
 ```
 
+### creating custom bridge in two days 
+
+```
+ docker  network create  ashubr1 
+  docker network create   ashubr2 --subnet 192.168.100.0/24  --gateway  192.168.100.1
+```
+
+### lets test it 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+[ashu@ip-172-31-87-240 ashu-apps]$ docker network ls
+NETWORK ID     NAME      DRIVER    SCOPE
+de1297431794   ashubr1   bridge    local
+7cd95c087527   ashubr2   bridge    local
+9a123e28b2bd   bridge    bridge    local
+fb0f31866eb8   host      host      local
+f05a4d83cf7c   none      null      local
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+[ashu@ip-172-31-87-240 ashu-apps]$ docker run -itd --name ashub1  --network ashubr1  alpine 
+9ca897dbb401f858e5f0736f2997801e9835bda476a192aee2fc717b21e3fdd4
+[ashu@ip-172-31-87-240 ashu-apps]$ docker run -itd --name ashub2  --network ashubr1  alpine 
+b01813f14202ab4f6034e3dab3fc697c6c97a3f324f148c467634c71919b2c01
+[ashu@ip-172-31-87-240 ashu-apps]$ docker  exec -it ashub1 sh 
+/ # ping ashub2
+PING ashub2 (172.22.0.3): 56 data bytes
+64 bytes from 172.22.0.3: seq=0 ttl=64 time=0.089 ms
+64 bytes from 172.22.0.3: seq=1 ttl=64 time=0.085 ms
+^C
+--- ashub2 ping statistics ---
+2 packets transmitted, 2 packets received, 0% packet loss
+round-trip min/avg/max = 0.085/0.087/0.089 ms
+/ # 
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+
+```
+
+### understanding concept in custom bridge 
+
+<img src="brc.png">
+
+
 
 
 
