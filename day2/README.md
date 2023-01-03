@@ -493,6 +493,81 @@ fb0f31866eb8   host      host      local
 f05a4d83cf7c   none      null      local
 ```
 
+### compose by docker 
+
+<img src="compose.png">
+
+### version of compose file
+
+<img src="v.png">
+
+### checking docker compose version 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ docker -v
+Docker version 20.10.17, build 100c701
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+[ashu@ip-172-31-87-240 ashu-apps]$ docker-compose  -v
+Docker Compose version v2.14.2
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+
+```
+
+### docker compsoe example  1
+
+```
+version:  '3.8' # compose file version i am gonna use 
+services: # all your micro services components
+  ashu-ui-app: # name of service 
+    image: ashunginx:appv1 
+    container_name: ashu-ui-c1
+    ports:
+    - "1234:80"
+ 
+```
+
+### lets run and verify 
+
+```
+ashu@ip-172-31-87-240 ashu-apps]$ ls
+ashu-compose  db-apps  java-apps  node-app  tasks  webapps
+[ashu@ip-172-31-87-240 ashu-apps]$ cd  ashu-compose/
+[ashu@ip-172-31-87-240 ashu-compose]$ ls
+docker-compose.yaml
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  up  -d 
+[+] Running 2/2
+ ⠿ Network ashu-compose_default  Created                                                                                      0.0s
+ ⠿ Container ashu-ui-c1          Started                                                                                      0.6s
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  ps
+NAME                IMAGE               COMMAND                  SERVICE             CREATED             STATUS              PORTS
+ashu-ui-c1          ashunginx:appv1     "/docker-entrypoint.…"   ashu-ui-app         22 seconds ago      Up 21 seconds       0.0.0.0:1234->80/tcp, :::1234->80/tcp
+[ashu@ip-172-31-87-240 ashu-compose]$ 
+
+```
+
+### few more commands 
+
+```
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  ps
+NAME                IMAGE               COMMAND                  SERVICE             CREATED             STATUS              PORTS
+ashu-ui-c1          ashunginx:appv1     "/docker-entrypoint.…"   ashu-ui-app         3 minutes ago       Up 3 minutes        0.0.0.0:1234->80/tcp, :::1234->80/tcp
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  stop 
+[+] Running 1/1
+ ⠿ Container ashu-ui-c1  Stopped                                                                                                                          0.2s
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  ps
+NAME                IMAGE               COMMAND             SERVICE             CREATED             STATUS              PORTS
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  start
+[+] Running 1/1
+ ⠿ Container ashu-ui-c1  Started                                                                                                                          0.5s
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  ps
+NAME                IMAGE               COMMAND                  SERVICE             CREATED             STATUS              PORTS
+ashu-ui-c1          ashunginx:appv1     "/docker-entrypoint.…"   ashu-ui-app         3 minutes ago       Up 4 seconds        0.0.0.0:1234->80/tcp, :::1234->80/tcp
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose exec  ashu-ui-app  bash 
+root@9a823384268c:/# 
+root@9a823384268c:/# exit
+exit
+```
+
 
 
 
