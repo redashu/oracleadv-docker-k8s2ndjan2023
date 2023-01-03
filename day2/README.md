@@ -792,6 +792,93 @@ OPTIONS="--default-ulimit nofile=32768:65536  -g  /opt/docker/"
  systemctl restart docker 
 ```
 
+### MYSQL container with docker storage 
+
+### creating volume 
+```
+[ashu@ip-172-31-87-240 ashu-compose]$ docker  volume  ls
+DRIVER    VOLUME NAME
+[ashu@ip-172-31-87-240 ashu-compose]$ docker  volume  create  ashu-db-vol
+ashu-db-vol
+[ashu@ip-172-31-87-240 ashu-compose]$ docker  volume  ls
+DRIVER    VOLUME NAME
+local     ashu-db-vol
+[ashu@ip-172-31-87-240 ashu-compose]$ docker  volume  inspect  ashu-db-vol
+[
+    {
+        "CreatedAt": "2023-01-03T11:16:08Z",
+        "Driver": "local",
+        "Labels": {},
+        "Mountpoint": "/opt/docker/volumes/ashu-db-vol/_data",
+        "Name": "ashu-db-vol",
+        "Options": {},
+        "Scope": "local"
+    }
+]
+```
+
+### lets create container 
+
+```
+[ashu@ip-172-31-87-240 ashu-compose]$ docker  run -itd --name ashudbc1  -v  ashu-db-vol:/var/lib/mysql/  -e  MYSQL_ROOT_PASSWORD="Oracle@098"  mysql 
+db17756c461024be444b84417265ea105fb32e8a952e91dcbb6bc11ecc7ff050
+[ashu@ip-172-31-87-240 ashu-compose]$ docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS         PORTS                 NAMES
+7e8769346e85   mysql     "docker-entrypoint.s…"   1 second ago    Up 1 second    3306/tcp, 33060/tcp   sibashisdbc1
+db17756c4610   mysql     "docker-entrypoint.s…"   5 seconds ago   Up 4 seconds   3306/tcp, 33060/tcp   ashudbc1
+[ashu@ip-172-31-87-240 ashu-compose]$ docker  logs   ashudbc1
+2023-01-03 11:22:01+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.31-1.el8 started.
+2023-01-03 11:22:02+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+2023-01-03 11:22:02+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.31-1.el8 started.
+2023-01-03 11:22:02+00:00 [Note] [Entrypoint]: Initializing database files
+2023-01-03T11:22:02.271802Z 0 [Warning] [MY-011068] [Server] The syntax '--skip-host-cache' is deprecated and will be removed in a future release. Please use SET GLOBAL host_cache_size=0 instead.
+2023-01-03T11:22:02.273267Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.31) initializing of server in progress as process 79
+2023-01-03T11:22:02.297622Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2023-01-03T11:22:02.786159Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2023-01-03T11:22:04.272477Z 6 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+2023-01-03 11:22:08+00:00 [Note] [Entrypoint]: Database files initi
+```
+
+### creating a database in container 
+
+```
+[ashu@ip-172-31-87-240 ashu-compose]$ 
+[ashu@ip-172-31-87-240 ashu-compose]$ docker  exec -it  ashudbc1  bash 
+bash-4.4# 
+bash-4.4# mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.31 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.00 sec)
+
+mysql> create  database hello;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> exit;
+Bye
+bash-4.4# exit
+exit
+```
+
 
 
 
