@@ -248,6 +248,132 @@ PING 172.17.0.4 (172.17.0.4): 56 data bytes
 round-trip min/avg/max = 0.070/0.089/0.108 ms
 ```
 
+### NAT in docker host 
+
+<img src="nat.png">
+
+### checking 
+
+```
+ashu@ip-172-31-87-240 tasks]$ docker  exec -it ashuc1  sh 
+/ # ping www.google.com 
+PING www.google.com (142.251.163.105): 56 data bytes
+64 bytes from 142.251.163.105: seq=0 ttl=95 time=1.270 ms
+64 bytes from 142.251.163.105: seq=1 ttl=95 time=1.180 ms
+64 bytes from 142.251.163.105: seq=2 ttl=95 time=1.157 ms
+64 bytes from 142.251.163.105: seq=3 ttl=95 time=1.297 ms
+^C
+--- www.google.com ping statistics ---
+4 packets transmitted, 4 packets received, 0% packet loss
+round-trip min/avg/max = 1.157/1.226/1.297 ms
+/ # 
+/ # wget  https://raw.githubusercontent.com/redashu/pythonLang/main/while.py
+Connecting to raw.githubusercontent.com (185.199.111.133:443)
+saving to 'while.py'
+while.py             100% |***************************************************************************************************************|   232  0:00:00 ETA
+'while.py' saved
+/ # ls
+bin       etc       lib       mnt       proc      run       srv       tmp       var
+dev       home      media     opt       root      sbin      sys       usr       while.py
+/ # 
+
+
+```
+
+### to Understanding port forwarding / mapping -- we are containerizing webapp with nginx webserver 
+
+<img src="nginx.png">
+
+### taking sample html ui code 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ ls
+db-apps  java-apps  node-app  tasks
+[ashu@ip-172-31-87-240 ashu-apps]$ mkdir  webapps
+[ashu@ip-172-31-87-240 ashu-apps]$ cd  webapps/
+[ashu@ip-172-31-87-240 webapps]$ ls
+[ashu@ip-172-31-87-240 webapps]$ git clone  https://github.com/microsoft/project-html-website.git
+Cloning into 'project-html-website'...
+remote: Enumerating objects: 24, done.
+remote: Counting objects: 100% (5/5), done.
+remote: Compressing objects: 100% (5/5), done.
+remote: Total 24 (delta 0), reused 3 (delta 0), pack-reused 19
+Receiving objects: 100% (24/24), 465.86 KiB | 24.52 MiB/s, done.
+[ashu@ip-172-31-87-240 webapps]$ ls
+project-html-website
+[ashu@ip-172-31-87-240 webapps]$ 
+
+```
+
+### adding dockerfile 
+
+```
+[ashu@ip-172-31-87-240 webapps]$ ls
+project-html-website
+[ashu@ip-172-31-87-240 webapps]$ touch Dockerfile
+[ashu@ip-172-31-87-240 webapps]$ ls
+Dockerfile  project-html-website
+[ashu@ip-172-31-87-240 webapps]$ ls  project-html-website/
+css  fonts  img  index.html  LICENSE  README.md  SECURITY.md
+[ashu@ip-172-31-87-240 webapps]$ 
+
+```
+
+### adding dockerfile and .dockerignore 
+
+```
+[ashu@ip-172-31-87-240 webapps]$ ls -a
+.  ..  Dockerfile  .dockerignore  project-html-website
+```
+
+### lets build it 
+
+```
+[ashu@ip-172-31-87-240 webapps]$ ls -a
+.  ..  Dockerfile  .dockerignore  project-html-website
+[ashu@ip-172-31-87-240 webapps]$ 
+[ashu@ip-172-31-87-240 webapps]$ docker build -t  ashunginx:appv1  .  
+Sending build context to Docker daemon    834kB
+Step 1/3 : FROM nginx
+latest: Pulling from library/nginx
+3f4ca61aafcd: Already exists 
+50c68654b16f: Pull complete 
+3ed295c083ec: Pull complete 
+40b838968eea: Pull complete 
+88d3ab68332d: Pull complete 
+5f63362a3fa3: Pull complete 
+Digest: sha256:0047b729188a15da49380d9506d65959cce6d40291ccfb4e039f5dc7efd33286
+Status: Downloaded newer image for nginx:latest
+ ---> 1403e55ab369
+Step 2/3 : LABEL name=ashutoshh
+ ---> Running in 1187f50740b7
+Removing intermediate container 1187f50740b7
+ ---> e81be24e9987
+Step 3/3 : COPY project-html-website /usr/share/nginx/html/
+ ---> 0e9ef82e621c
+Successfully built 0e9ef82e621c
+Successfully tagged ashunginx:appv1
+[ashu@ip-172-31-87-240 webapps]$ 
+```
+
+### understanding and doing port mapping 
+
+<img src="portm.png">
+
+### port mapping 
+
+```
+ashu@ip-172-31-87-240 webapps]$ docker run -itd --name ashuwebapp1 -p  1234:80  ashunginx:appv1  
+c796e213864e5eb88f792afca55729101445dfb408eab31399ab6d2beea83b7f
+[ashu@ip-172-31-87-240 webapps]$ docker ps
+CONTAINER ID   IMAGE                 COMMAND                  CREATED                  STATUS                  PORTS                                   NAMES
+8a24a82782d6   sibashisngnix:appv1   "/docker-entrypoint.…"   Less than a second ago   Up Less than a second   0.0.0.0:9966->80/tcp, :::9966->80/tcp   sibashisngnixc1
+c796e213864e   ashunginx:appv1       "/docker-entrypoint.…"   3 seconds ago            Up 2 seconds            0.0.0.0:1234->80/tcp, :::1234->80/tcp   ashuwebapp1
+ccfbc5d9362d   webapp:shailesh       "/docker-entrypoint.…"   8 seconds ago            Up 8 seconds            0.0.0.0:2345->80/tcp, :::2345->80/tcp   shaileshweb
+[ashu@ip-172-31-87-240 webapps]$ 
+
+```
+
 
 
 
