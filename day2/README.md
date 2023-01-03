@@ -374,6 +374,60 @@ ccfbc5d9362d   webapp:shailesh       "/docker-entrypoint.…"   8 seconds ago   
 
 ```
 
+## Docker bridge None 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ docker  network  ls
+NETWORK ID     NAME      DRIVER    SCOPE
+9a123e28b2bd   bridge    bridge    local
+fb0f31866eb8   host      host      local
+f05a4d83cf7c   none      null      local
+[ashu@ip-172-31-87-240 ashu-apps]$ docker run -it --rm  --network none  alpine  
+/ # 
+/ # ifconfig 
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+/ # ping google.com 
+ping: bad address 'google.com'
+/ # ping  172.17.0.1
+PING 172.17.0.1 (172.17.0.1): 56 data bytes
+ping: sendto: Network unreachable
+/ # exit
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+```
+
+### Host network bridge 
+
+<img src="host.png">
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ docker run -it --rm  --network host   alpine  
+/ # ifconfig 
+docker0   Link encap:Ethernet  HWaddr 02:42:4F:88:68:DB  
+          inet addr:172.17.0.1  Bcast:172.17.255.255  Mask:255.255.0.0
+          inet6 addr: fe80::42:4fff:fe88:68db/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:5277 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:5689 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:5775072 (5.5 MiB)  TX bytes:45138549 (43.0 MiB)
+
+eth0      Link encap:Ethernet  HWaddr 12:C6:F8:D1:44:53  
+          inet addr:172.31.87.240  Bcast:172.31.95.255  Mask:255.255.240.0
+          inet6 addr: fe80::10c6:f8ff:fed1:4453/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:9001  Metric:1
+          RX packets:559224 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:249405 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:511541454 (487.8 MiB)  TX bytes:68972414 (65.7 MiB)
+```
+
 
 
 
