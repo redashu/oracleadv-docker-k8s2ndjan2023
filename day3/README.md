@@ -334,6 +334,68 @@ fire@ashutoshhs-MacBook-Air Oracle_dk %
 
 <img src="dp.png">
 
+## script to run in all the system 
+
+```
+[root@minion1 ~]# cat s.sh 
+# disable SElinux secuirty 
+setenforce  0
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/'  /etc/selinux/config
+
+# disable swap memory 
+
+swapoff  -a
+
+# enable linux kernel firewall bridge module for CNI 
+modprobe br_netfilter
+echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+
+# installing any CRE 
+yum  install  docker -y 
+# configure it 
+
+cat  <<X  >/etc/docker/daemon.json
+{
+  "exec-opts": ["native.cgroupdriver=systemd"]
+}
+
+X
+
+# starting docker 
+systemctl enable --now  docker
+
+# install kubeadm 
+cat  <<EOF  >/etc/yum.repos.d/kube.repo
+[kube]
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+gpgcheck=0
+EOF
+
+yum install kubeadm -y 
+systemctl enable --now  kubelet
+```
+
+### only on master Node / control plane 
+
+```
+[root@control-plane ~]# kubeadm  init --pod-network-cidr=192.168.0.0/16  --apiserver-advertise-address=0.0.0.0   --apiserver-cert-extra-sans=129.146.169.201
+[init] Using Kubernetes version: v1.26.0
+[preflight] Running pre-flight checks
+	[WARNING Firewalld]: firewalld is active, please ensure ports [6443 10250] are open or your cluster may not function correctly
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your internet connection
+[preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+[certs] Using certificateDir folder "/etc/kubernetes/pki"
+[certs] Generating "ca" certificate and key
+[certs] Generating "apiserver" certificate and key
+[certs] apiserver serving cert is signed for DNS names [control-plane kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 10.0.0.215 129.146.169.201]
+[certs] Generating "apiserver-kubelet-client" certificate and key
+[certs] Generating "front-proxy-ca" certificate and key
+[certs] Generating "front-proxy-client" certificate and key
+[certs] Generating "etcd/ca" certificate and key
+
+```
+
 
 
 
