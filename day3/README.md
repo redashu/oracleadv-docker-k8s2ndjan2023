@@ -314,6 +314,26 @@ fire@ashutoshhs-MacBook-Air Oracle_dk %
 
 ```
 
+## Options for setting up k8s env 
+
+<img src="env.png">
+
+### large cluster consideration 
+
+<img src="lg.png">
+
+### firewall ports to open in prod env 
+
+<img src="firewall.png">
+
+### components to setup on control plane
+
+<img src="cp.png">
+
+### components to setup on worker nodes /data plane 
+
+<img src="dp.png">
+
 
 
 
