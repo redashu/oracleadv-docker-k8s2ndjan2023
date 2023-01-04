@@ -261,6 +261,60 @@ ashu-ui-c1          nginx               "/docker-entrypoint.…"   ashu-web-ui  
  ⠿ Network ashu-compose_ashubr1  Removed 
 ```
 
+## Introduction to container orchestration engine 
+
+<img src="corch.png">
+
+### K8s 3 teir architecture 
+
+<img src="k8s1.png">
+
+### installing kubectl (client of control plane) in Linux machine 
+
+```
+[root@ip-172-31-87-240 ~]# curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   138  100   138    0     0   3350      0 --:--:-- --:--:-- --:--:--  3365
+100 45.7M  100 45.7M    0     0  88.3M      0 --:--:-- --:--:-- --:--:--  105M
+[root@ip-172-31-87-240 ~]# ls
+kubectl  labs
+[root@ip-172-31-87-240 ~]# mv  kubectl  /usr/bin/
+[root@ip-172-31-87-240 ~]# chmod +x /usr/bin/kubectl 
+[root@ip-172-31-87-240 ~]# kubectl  version --client 
+WARNING: This version information is deprecated and will be replaced with the output from kubectl version --short.  Use --output=yaml|json to get the full version.
+Client Version: version.Info{Major:"1", Minor:"26", GitVersion:"v1.26.0", GitCommit:"b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d", GitTreeState:"clean", BuildDate:"2022-12-08T19:58:30Z", GoVersion:"go1.19.4", Compiler:"gc", Platform:"linux/amd64"}
+Kustomize Version: v4.5.7
+[root@ip-172-31-87-240 ~]# 
+
+```
+
+### Installing kubectl on mac 
+
+```
+fire@ashutoshhs-MacBook-Air Oracle_dk % curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/darwin/amd64/kubectl"
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   138  100   138    0     0    308      0 --:--:-- --:--:-- --:--:--   308
+100 51.2M  100 51.2M    0     0  12.9M      0  0:00:03  0:00:03 --:--:-- 17.9M
+fire@ashutoshhs-MacBook-Air Oracle_dk % 
+fire@ashutoshhs-MacBook-Air Oracle_dk % ls
+cgroups	day1	day2	day3	kubectl	mysql
+fire@ashutoshhs-MacBook-Air Oracle_dk % sudo mv kubectl  /usr/local/bin 
+Password:
+fire@ashutoshhs-MacBook-Air Oracle_dk % sudo chmod +x /usr/local/bin/kubectl
+fire@ashutoshhs-MacBook-Air Oracle_dk % 
+fire@ashutoshhs-MacBook-Air Oracle_dk % kubectl version --client 
+WARNING: This version information is deprecated and will be replaced with the output from kubectl version --short.  Use --output=yaml|json to get the full version.
+Client Version: version.Info{Major:"1", Minor:"26", GitVersion:"v1.26.0", GitCommit:"b46a3f887ca979b1a5d14fd39cb1af43e7e5d12d", GitTreeState:"clean", BuildDate:"2022-12-08T19:58:30Z", GoVersion:"go1.19.4", Compiler:"gc", Platform:"darwin/amd64"}
+Kustomize Version: v4.5.7
+fire@ashutoshhs-MacBook-Air Oracle_dk % 
+
+
+
+```
+
+
 
 
 
