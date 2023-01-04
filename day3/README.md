@@ -645,6 +645,164 @@ exit
 pod "ashupod-123" deleted
 ```
 
+### creating pod yaml /json automatically 
+
+```
+ashu@ip-172-31-87-240 k8s-resources]$ kubectl run ashu-pod111 --image=docker.io/dockerashu/oraclejava:webappv1 --port 8080 --dry-run=client  -o yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: ashu-pod111
+  name: ashu-pod111
+spec:
+  containers:
+  - image: docker.io/dockerashu/oraclejava:webappv1
+    name: ashu-pod111
+    ports:
+    - containerPort: 8080
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl run ashu-pod111 --image=docker.io/dockerashu/oraclejava:webappv1 --port 8080 --dry-run=client  -o json 
+{
+    "kind": "Pod",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "ashu-pod111",
+        "creationTimestamp": null,
+        "labels": {
+            "run": "ashu-pod111"
+        }
+    },
+    "spec": {
+        "containers": [
+            {
+                "name": "ashu-pod111",
+                "image": "docker.io/dockerashu/oraclejava:webappv1",
+                "ports": [
+                    {
+                        "containerPort": 8080
+                    }
+                ],
+                "resources": {}
+```
+
+### deploy 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl run ashu-pod111 --image=docker.io/dockerashu/oraclejava:webappv1 --port 8080 --dry-run=client  -o yaml >autopod.yaml
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl run ashu-pod111 --image=docker.io/dockerashu/oraclejava:webappv1 --port 8080 --dry-run=client  -o json >autopod.json
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ ls
+ashupod1.yaml  autopod.json  autopod.yaml
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  apply -f autopod.json 
+pod/ashu-pod111 created
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get pods
+NAME          READY   STATUS    RESTARTS   AGE
+ashu-pod111   1/1     Running   0          4s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  delete  -f autopod.json 
+pod "ashu-pod111" deleted
+[ashu@ip-172-31-87-240 k8s-resources
+```
+
+## Deploy pod in k8s using private Image
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  run ashunewpod  --image=phx.ocir.io/ax8yv0ztaclr/newapp:v1 --port 8080 --dry-run=client -o yaml >ocrpod.yaml 
+```
+
+### deploy error 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  apply -f ocrpod.yaml 
+pod/ashunewpod created
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   get  pods
+NAME           READY   STATUS             RESTARTS   AGE
+anandnewpod    0/1     ImagePullBackOff   0          40s
+ankitanewpod   0/1     ImagePullBackOff   0          82s
+ashunewpod     0/1     ImagePullBackOff   0          4s
+```
+
+## Introduction to secret 
+
+<img src="secret.png">
+
+### creating docker-registry type secret file 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   create secret 
+Create a secret using specified subcommand.
+
+Available Commands:
+  docker-registry   Create a secret for use with a Docker registry
+  generic           Create a secret from a local file, directory, or literal value
+  tls               Create a TLS secret
+
+Usage:
+  kubectl create secret [flags] [options]
+
+Use "kubectl <command> --help" for more information about a given command.
+Use "kubectl options" for a list of global command-line options (applies to all commands).
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   create secret  docker-registry ashu-reg-secret --docker-server=phx.ocir.io --docker-username="ax8yv0ztaclr/thexyzcompany2022@gmail.com" --docker-password="OA<i)Jpc8ts.2_)HCK;-"  --dry-run=client -o yaml >mysecret.yaml
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+```
+
+### lets use it 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ ls
+ashupod1.yaml  autopod.json  autopod.yaml  mysecret.yaml  ocrpod.yaml
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl apply -f mysecret.yaml 
+secret/ashu-reg-secret created
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  secret 
+NAME                  TYPE                                  DATA   AGE
+ashu-reg-secret       kubernetes.io/dockerconfigjson        1      4s
+```
+
+### use in POd yaml 
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: ashunewpod
+  name: ashunewpod # name of pod 
+spec:
+  imagePullSecrets: # call secret name 
+  - name: ashu-reg-secret 
+  containers:
+  - image: phx.ocir.io/ax8yv0ztaclr/newapp:v1
+    name: ashunewpod
+    ports:
+    - containerPort: 8080
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+```
+
+### new pod 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl apply -f ocrpod.yaml 
+pod/ashunewpod created
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  pods
+NAME             READY   STATUS    RESTARTS   AGE
+ashunewpod       1/1     Running   0          3s
+nishant-pod111   1/1     Running   0          19s
+sibashispod      1/1     Running   0          29s
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+```
+
+
 
 
 
