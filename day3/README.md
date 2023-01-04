@@ -130,6 +130,33 @@ _data
 abc.logs  abc1.logs
 [root@ip-172-31-87-240 _data]#
 ```
+### mounting non docker area inside container without creating any volume 
+
+```
+[ashu@ip-172-31-87-240 python_code]$ docker  run -itd --name t1  -v /home/ashu/ashu-apps/python_code:/mnt/new:ro  ashualp:pycodev1
+56e541200e22795fef7324dece4d6106a03fbe0802a574cc6b978cb5414d71d1
+[ashu@ip-172-31-87-240 python_code]$ docker ps
+CONTAINER ID   IMAGE              COMMAND                  CREATED          STATUS          PORTS     NAMES
+56e541200e22   ashualp:pycodev1   "/bin/sh -c 'python3…"   3 seconds ago    Up 2 seconds              t1
+ad0eee81f728   alpine             "/bin/sh"                9 minutes ago    Up 9 minutes              ankitac2
+58dd9ecb721f   alpine             "/bin/sh"                10 minutes ago   Up 10 minutes             ashuc2
+46671b8986eb   alpine             "/bin/sh"                18 minutes ago   Up 18 minutes             ankitac1
+efd9830be37d   alpine             "/bin/sh"                21 minutes ago   Up 21 minutes             ashuc1
+[ashu@ip-172-31-87-240 python_code]$ docker  exec -it t1 sh 
+/ # cd  /mnt/new/
+/mnt/new # ls
+test.py
+/mnt/new # python3  test.py 
+Hello world
+Hello world
+^CTraceback (most recent call last):
+  File "/mnt/new/test.py", line 4, in <module>
+    time.sleep(5)
+KeyboardInterrupt
+
+```
+
+
 
 
 
