@@ -402,6 +402,69 @@ systemctl enable --now  kubelet
 
 <img src="api.png">
 
+### auth file of api-server on control plane 
+
+```
+[root@master ~]# cd  /etc/kubernetes/
+[root@master kubernetes]# ls
+admin.conf
+```
+### file to download on client k8s system 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ wget  http://158.101.3.169/admin.conf 
+--2023-01-04 09:02:51--  http://158.101.3.169/admin.conf
+Connecting to 158.101.3.169:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 5641 (5.5K) [text/plain]
+Saving to: ‘admin.conf’
+
+100%[================================================================================================>] 5,641       --.-K/s   in 0s      
+
+2023-01-04 09:02:51 (473 MB/s) - ‘admin.conf’ saved [5641/5641]
+
+[ashu@ip-172-31-87-240 ashu-apps]$ ls
+admin.conf  ashu-compose  db-apps  java-apps  node-app  python_code  tasks  webapps
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+
+```
+
+### sending first request from k8s client to master Node 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ kubectl  get  nodes   --kubeconfig  admin.conf 
+NAME      STATUS   ROLES                  AGE   VERSION
+master    Ready    control-plane,master   60m   v1.23.15
+minion1   Ready    <none>                 53m   v1.23.15
+minion2   Ready    <none>                 18m   v1.23.15
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+```
+
+### 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ kubectl  cluster-info  --kubeconfig admin.conf 
+Kubernetes control plane is running at https://158.101.3.169:6443
+CoreDNS is running at https://158.101.3.169:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+```
+
+### copy admin.conf in desired location 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ mkdir  ~/.kube
+mkdir: cannot create directory ‘/home/ashu/.kube’: File exists
+[ashu@ip-172-31-87-240 ashu-apps]$ cp -v admin.conf   ~/.kube/config 
+‘admin.conf’ -> ‘/home/ashu/.kube/config’
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+[ashu@ip-172-31-87-240 ashu-apps]$ kubectl  get  nodes   
+NAME      STATUS   ROLES                  AGE   VERSION
+master    Ready    control-plane,master   63m   v1.23.15
+minion1   Ready    <none>                 56m   v1.23.15
+minion2   Ready    <none>                 20m   v1.23.15
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+```
+
 
 
 
