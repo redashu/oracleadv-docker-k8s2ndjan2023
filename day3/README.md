@@ -557,6 +557,94 @@ nishantpod-123   1/1     Running   0          10s
 sibashis-123     1/1     Running   0          22s
 ```
 
+### all pods status 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  nodes
+NAME      STATUS   ROLES                  AGE    VERSION
+master    Ready    control-plane,master   122m   v1.23.15
+minion1   Ready    <none>                 115m   v1.23.15
+minion2   Ready    <none>                 80m    v1.23.15
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   get  pods -o wide
+NAME             READY   STATUS    RESTARTS   AGE     IP                NODE      NOMINATED NODE   READINESS GATES
+anandpod-123     1/1     Running   0          6m2s    192.168.34.3      minion1   <none>           <none>
+ankitapod-123    1/1     Running   0          4m      192.168.34.4      minion1   <none>           <none>
+ashupod-123      1/1     Running   0          7m59s   192.168.179.193   minion2   <none>           <none>
+mypod            1/1     Running   0          5m6s    192.168.179.196   minion2   <none>           <none>
+```
+
+### describe pod 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  describe  pod  ashupod-123 
+Name:             ashupod-123
+Namespace:        default
+Priority:         0
+Service Account:  default
+Node:             minion2/10.0.0.240
+Start Time:       Wed, 04 Jan 2023 10:04:12 +0000
+Labels:           <none>
+Annotations:      cni.projectcalico.org/containerID: 6713839cee08aeb96d70cbfe3d83adb0521217277783435f2a9429eee3b00659
+                  cni.projectcalico.org/podIP: 192.168.179.193/32
+                  cni.projectcalico.org/podIPs: 192.168.179.193/32
+Status:           Running
+IP:               192.168.179.193
+IPs:
+  IP:  192.168.179.193
+Containers:
+  ashuc1:
+    Container ID:   docker://5255db42580d14fc7f01c44ca9f8f408def324453106ca1534aab24ac19b3343
+    Image:          docker.io/dockerashu/oraclejava:webappv1
+    Image ID:       docker-pullable://dockerashu/oraclejava@sha256:d175faaecc1c0e7d887685501589f2f09ab0b237b47f6f3d5181b82ba2bb8c80
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Wed, 04 Jan 2023 10:04:30 +0000
+    Ready:          True
+```
+
+### accessing container inside pod 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  exec -it  ashupod-123  -- bash 
+root@ashupod-123:/usr/local/tomcat/webapps/ashu# 
+root@ashupod-123:/usr/local/tomcat/webapps/ashu# 
+root@ashupod-123:/usr/local/tomcat/webapps/ashu# 
+root@ashupod-123:/usr/local/tomcat/webapps/ashu# ls
+devops.png  index.html  WEB-INF  welcome.jsp
+root@ashupod-123:/usr/local/tomcat/webapps/ashu# cd /
+root@ashupod-123:/# ls
+bin  boot  dev  etc  home  lib  lib32  lib64  libx32  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@ashupod-123:/# exit
+exit
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+```
+
+### logs 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  logs  ashupod-123
+04-Jan-2023 10:04:31.258 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.1.4
+04-Jan-2023 10:04:31.262 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Dec 5 2022 16:30:12 UTC
+04-Jan-2023 10:04:31.262 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.1.4.0
+04-Jan-2023 10:04:31.262 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+04-Jan-2023 10:04:31.262 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            5.4.17-2136.314.6.2.el7uek.x86_64
+```
+
+### yaml and json print of a running pod 
+
+```
+451  kubectl  get pod  ashupod-123  -o yaml 
+  452  kubectl  get pod  ashupod-123  -o json 
+```
+
+### deleting 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  delete pod ashupod-123
+pod "ashupod-123" deleted
+```
+
 
 
 
