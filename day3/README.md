@@ -396,6 +396,12 @@ systemctl enable --now  kubelet
 
 ```
 
+## Components of control plane 
+
+### kube-apiServer 
+
+<img src="api.png">
+
 
 
 
