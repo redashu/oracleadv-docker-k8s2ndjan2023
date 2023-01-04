@@ -155,6 +155,113 @@ Hello world
 KeyboardInterrupt
 
 ```
+### FInal compose and docker example with volume 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ ls
+ashu-compose  db-apps  java-apps  node-app  python_code  tasks  webapps
+[ashu@ip-172-31-87-240 ashu-apps]$ cd  ashu-compose/
+[ashu@ip-172-31-87-240 ashu-compose]$ ls
+all-compose.yaml  docker-compose.yaml  mysql.yaml
+[ashu@ip-172-31-87-240 ashu-compose]$ git clone https://github.com/ShaifArfan/one-page-website-html-css-project.git
+Cloning into 'one-page-website-html-css-project'...
+remote: Enumerating objects: 52, done.
+remote: Counting objects: 100% (52/52), done.
+remote: Compressing objects: 100% (36/36), done.
+remote: Total 52 (delta 21), reused 41 (delta 15), pack-reused 0
+Receiving objects: 100% (52/52), 346.90 KiB | 23.13 MiB/s, done.
+Resolving deltas: 100% (21/21), done.
+[ashu@ip-172-31-87-240 ashu-compose]$ ls
+all-compose.yaml  docker-compose.yaml  mysql.yaml  one-page-website-html-css-project
+[ashu@ip-172-31-87-240 ashu-compose]$ 
+
+```
+
+### FInal compose file 
+
+```
+version:  '3.8' # compose file version 
+networks: # creating two network bridges 
+  ashubr1:
+  ashubr2:
+volumes: # creating two volumes
+  ashuvol1:
+  ashuvol2: 
+services:
+  ashu-web-ui:
+    image: nginx 
+    container_name: ashu-ui-c1 
+    ports:
+    - "1234:80"
+    volumes: # using bind mount 
+    - "./one-page-website-html-css-project:/usr/share/nginx/html/"
+    networks:
+    - ashubr1
+    - ashubr2 
+  ashu-backend:
+    image: adminer 
+    container_name: ashu-backend-c1
+    ports:
+    - "1111:8080"
+    networks:
+    - ashubr1 
+  ashu-db:
+    image: mysql
+    container_name: ashu-db-c1
+    volumes: # docker area volume 
+    - "ashuvol1:/var/lib/mysql/"
+    environment:
+      MYSQL_ROOT_PASSWORD: "OracleD@098"
+    env_file:
+    - mycred.env 
+    networks:
+    - ashubr1
+```
+
+### lets run it 
+
+```
+[ashu@ip-172-31-87-240 ashu-compose]$ ls
+all-compose.yaml  docker-compose.yaml  final.yaml  mycred.env  mysql.yaml  one-page-website-html-css-project
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  -f final.yaml  up -d 
+[+] Running 8/8
+ ⠿ ashu-backend Pulled                                                                                                               5.3s
+   ⠿ 32de3c850997 Pull complete                                                                                                      3.1s
+   ⠿ 8bddad460143 Pull complete                                                                                                      4.7s
+   ⠿ 5bf0beaa0412 Pull complete                                                                                                      4.8s
+   ⠿ 1e7ee08ea648 Pull complete                                                                                                      4.8s
+   ⠿ bd9f958670d2 Pull complete                                                                                                      4.9s
+   ⠿ 292984a5d9c1 Pull complete                                                                                                      5.0s
+   ⠿ 20a148ad3aa6 Pull complete                                                                                                      5.1s
+[+] Running 6/6
+ ⠿ Network ashu-compose_ashubr1    Created                                                                                           0.0s
+ ⠿ Network ashu-compose_ashubr2    Created                                                                                           0.0s
+ ⠿ Volume "ashu-compose_ashuvol1"  Created                                                                                           0.0s
+ ⠿ Container ashu-db-c1            Started                                                                                           2.2s
+ ⠿ Container ashu-ui-c1            Started                                                                                           2.4s
+ ⠿ Container ashu-backend-c1       Started                                                                                           2.4s
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  -f final.yaml  ps
+NAME                IMAGE               COMMAND                  SERVICE             CREATED             STATUS              PORTS
+ashu-backend-c1     adminer             "entrypoint.sh php -…"   ashu-backend        19 seconds ago      Up 17 seconds       0.0.0.0:1111->8080/tcp, :::1111->8080/tcp
+ashu-db-c1          mysql               "docker-entrypoint.s…"   ashu-db             19 seconds ago      Up 17 seconds       3306/tcp, 33060/tcp
+ashu-ui-c1          nginx               "/docker-entrypoint.…"   ashu-web-ui         19 seconds ago      Up 17 seconds       0.0.0.0:1234->80/tcp, :::1234->80/tcp
+[ashu@ip-172-31-87-240 ashu-compose]$ 
+```
+
+### done with docker 
+
+
+```
+[ashu@ip-172-31-87-240 ashu-compose]$ docker-compose  -f final.yaml  down 
+[+] Running 5/5
+ ⠿ Container ashu-db-c1          Removed                                                                                                                         1.3s
+ ⠿ Container ashu-ui-c1          Removed                                                                                                                         0.5s
+ ⠿ Container ashu-backend-c1     Removed                                                                                                                         0.3s
+ ⠿ Network ashu-compose_ashubr2  Removed                                                                                                                         0.1s
+ ⠿ Network ashu-compose_ashubr1  Removed 
+```
+
+
 
 
 
