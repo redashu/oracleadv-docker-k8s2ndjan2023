@@ -465,6 +465,98 @@ minion2   Ready    <none>                 20m   v1.23.15
 [ashu@ip-172-31-87-240 ashu-apps]$ 
 ```
 
+### etcd in control plane 
+
+<img src="etcd.png">
+
+## lets deploy java webapp in k8s 
+
+### build docker image for java webapp 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ ls
+admin.conf  ashu-compose  db-apps  java-apps  node-app  python_code  tasks  webapps
+[ashu@ip-172-31-87-240 ashu-apps]$ cd  webapps/
+[ashu@ip-172-31-87-240 webapps]$ ls
+Dockerfile  project-html-website
+[ashu@ip-172-31-87-240 webapps]$ git clone https://github.com/redashu/javawebapp.git
+Cloning into 'javawebapp'...
+remote: Enumerating objects: 86, done.
+remote: Counting objects: 100% (86/86), done.
+remote: Compressing objects: 100% (81/81), done.
+remote: Total 86 (delta 33), reused 7 (delta 0), pack-reused 0
+Receiving objects: 100% (86/86), 54.04 KiB | 6.75 MiB/s, done.
+Resolving deltas: 100% (33/33), done.
+[ashu@ip-172-31-87-240 webapps]$ ls
+Dockerfile  javawebapp  project-html-website
+[ashu@ip-172-31-87-240 webapps]$ 
+```
+
+### build and push 
+
+```
+17  docker build -t  dockerashu/oraclejava:webappv1  . 
+  418  history 
+  419  docker login 
+  420  history 
+  421  docker push dockerashu/oraclejava:webappv1
+```
+
+### Understanding YAML apiVersion resources 
+
+<img src="res.png">
+
+### listing 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ kubectl  api-resources 
+NAME                              SHORTNAMES   APIVERSION                             NAMESPACED   KIND
+bindings                                       v1                                     true         Binding
+componentstatuses                 cs           v1                                     false        ComponentStatus
+configmaps                        cm           v1                                     true         ConfigMap
+endpoints                         ep           v1                                     true         Endpoints
+```
+
+
+### creating pod YAML 
+
+<img src="pod.png">
+
+
+```
+apiVersion: v1 
+kind: Pod
+metadata: # info about Resource 
+  name: ashupod-123  # name of Pod 
+spec: # app related data 
+  containers:
+  - name: ashuc1
+    image: docker.io/dockerashu/oraclejava:webappv1 # image from docker hub 
+    ports: # default app port optional part 
+    - containerPort: 8080 
+```
+
+### lets deploy it 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ ls
+ashu-compose  db-apps  java-apps  k8s-resources  node-app  python_code  tasks  webapps
+[ashu@ip-172-31-87-240 ashu-apps]$ cd k8s-resources/
+[ashu@ip-172-31-87-240 k8s-resources]$ ls
+ashupod1.yaml
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl apply -f ashupod1.yaml 
+pod/ashupod-123 created
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   get  pods
+NAME           READY   STATUS              RESTARTS   AGE
+ashupod-123    0/1     ContainerCreating   0          7s
+sibashis-123   0/1     ContainerCreating   0          5s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   get  pods
+NAME             READY   STATUS    RESTARTS   AGE
+ashupod-123      1/1     Running   0          24s
+nishantpod-123   1/1     Running   0          10s
+sibashis-123     1/1     Running   0          22s
+```
+
 
 
 
