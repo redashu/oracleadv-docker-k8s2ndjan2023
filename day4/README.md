@@ -464,5 +464,104 @@ ashu-deploy1   1/1     1            1           2m39s
 
 ```
 
+### creating nodeport service also 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  deploy 
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-deploy1   1/1     1            1           2m39s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl expose deployment ashu-deploy1  --type NodePort --port 8080 --name ashulb1
+service/ashulb1 exposed
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   get  svc
+NAME      TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+ashulb1   NodePort   10.106.176.190   <none>        8080:30324/TCP   6s
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+
+```
+
+### deploying metric server 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl apply -f https://raw.githubusercontent.com/redashu/k8s/hpa/hpa/components.yaml
+serviceaccount/metrics-server created
+clusterrole.rbac.authorization.k8s.io/system:aggregated-metrics-reader created
+clusterrole.rbac.authorization.k8s.io/system:metrics-server created
+rolebinding.rbac.authorization.k8s.io/metrics-server-auth-reader created
+clusterrolebinding.rbac.authorization.k8s.io/metrics-server:system:auth-delegator created
+clusterrolebinding.rbac.authorization.k8s.io/system:metrics-server created
+service/metrics-server created
+deployment.apps/metrics-server created
+apiservice.apiregistration.k8s.io/v1beta1.metrics.k8s.io created
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get po -n kube-system 
+NAME                                       READY   STATUS    RESTARTS      AGE
+calico-kube-controllers-7b8458594b-4qdtz   1/1     Running   1 (16h ago)   25h
+calico-node-6fdk9                          1/1     Running   1 (16h ago)   24h
+calico-node-bxxkq                          1/1     Running   1 (16h ago)   25h
+calico-node-gb94m                          1/1     Running   1 (16h ago)   25h
+coredns-bd6b6df9f-29wkr                    1/1     Running   1 (16h ago)   25h
+coredns-bd6b6df9f-h4nln                    1/1     Running   1 (16h ago)   25h
+etcd-master                                1/1     Running   1 (16h ago)   25h
+kube-apiserver-master                      1/1     Running   1 (16h ago)   25h
+kube-controller-manager-master             1/1     Running   1 (16h ago)   25h
+kube-proxy-8k5fc                           1/1     Running   1 (16h ago)   25h
+kube-proxy-kbvkh                           1/1     Running   1 (16h ago)   25h
+kube-proxy-p7ndg                           1/1     Running   1 (16h ago)   24h
+kube-scheduler-master                      1/1     Running   1 (16h ago)   25h
+metrics-server-5c69db44f5-vfvm7            1/1     Running   0             13s
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+```
+
+### deploy HPA rule in your namespace for deployment 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl autoscale deployment  ashu-deploy1  --min=3 --max=20 --cpu-percent=70 --dry-run=client -o yaml 
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  creationTimestamp: null
+  name: ashu-deploy1
+spec:
+  maxReplicas: 20
+  minReplicas: 3
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ashu-deploy1
+  targetCPUUtilizationPercentage: 70
+status:
+  currentReplicas: 0
+  desiredReplicas: 0
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl autoscale deployment  ashu-deploy1  --min=3 --max=20 --cpu-percent=70 --dry-run=client -o yaml  >hpa.yaml 
+```
+
+### apply 
+
+```
+ashu-deploy1-85644f5f9d-2rm5s   1/1     Running   0          18m
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl apply -f hpa.yaml 
+horizontalpodautoscaler.autoscaling/ashu-deploy1 created
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  hpa
+NAME           REFERENCE                 TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+ashu-deploy1   Deployment/ashu-deploy1   <unknown>/70%   3         20        0          5s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  hpa
+NAME           REFERENCE                 TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+ashu-deploy1   Deployment/ashu-deploy1   <unknown>/70%   3         20        1          20s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  hpa
+NAME           REFERENCE                 TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+ashu-deploy1   Deployment/ashu-deploy1   <unknown>/70%   3         20        1          28s
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get po 
+NAME                            READY   STATUS    RESTARTS   AGE
+ashu-deploy1-85644f5f9d-2726z   1/1     Running   0          20s
+ashu-deploy1-85644f5f9d-2rm5s   1/1     Running   0          19m
+ashu-deploy1-85644f5f9d-8jmvs   1/1     Running   0          20s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  hpa
+NAME           REFERENCE                 TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+ashu-deploy1   Deployment/ashu-deploy1   <unknown>/70%   3         20        3          42s
+```
+
+
+
 
 
