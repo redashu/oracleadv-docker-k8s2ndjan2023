@@ -407,5 +407,62 @@ ashulb1   NodePort   10.103.193.222   <none>        8080:30757/TCP   5s
 [ashu@ip-172-31-87-240 k8s-resources]$ 
 ```
 
+### HPA introduction 
+
+<img src="hpa.png">
+
+### limit vertical scale of pod 
+
+<img src="limit.png">
+
+### updating deployment 
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-deploy1
+  name: ashu-deploy1 # name of deployment 
+spec:
+  replicas: 1 # number of pod we want 
+  selector:
+    matchLabels:
+      app: ashu-deploy1
+  strategy: {}
+  template: # to create pods deployment will be using template of pod
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashu-deploy1
+    spec:
+      containers:
+      - image: docker.io/dockerashu/oraclejava:webappv1
+        name: oraclejava
+        ports:
+        - containerPort: 8080
+        resources:  # by default it will be using DMA 
+          requests: # default request by pod 
+            memory: 200M
+            cpu: 100m  # 1 vcpu = 1000 Milicore  1000m 
+          limits: # max limit of pod 
+            memory: 500M
+            cpu: 200m 
+status: {}
+
+```
+
+### deploy it 
+
+```
+kubectl  apply -f mydeploy.yaml
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  deploy 
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-deploy1   1/1     1            1           2m39s
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+
+```
+
 
 
