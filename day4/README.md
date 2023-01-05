@@ -197,5 +197,93 @@ ashu-deploy1-7d7d754b6-q4ghr   1/1     Running   0          91s   192.168.179.23
 ashu-deploy1-7d7d754b6-vbwsc   1/1     Running   0          9s    192.168.34.55     minion1   <none>           <none>
 [ashu@ip-172-31-87-240 k8s-resources]$ 
 ```
+### some info about CNI 
+
+<img src="cni.png">
+
+### sidecar container concept 
+
+<img src="sidecar.png">
+
+### creating a pod 
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: ashu-net1
+  name: ashu-net1
+spec:
+  containers:
+  - image: alpine
+    name: ashu-net1
+    command: ['sleep','1000']
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+```
+====
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl replace -f nettest1.yaml --force
+pod "ashu-net1" deleted
+pod/ashu-net1 replaced
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get po 
+NAME        READY   STATUS    RESTARTS   AGE
+ashu-net1   1/1     Running   0          4s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  po -owide
+NAME        READY   STATUS    RESTARTS   AGE   IP              NODE      NOMINATED NODE   READINESS GATES
+ashu-net1   1/1     Running   0          44s   192.168.34.63   minion1   <none>           <none>
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+
+```
+
+### checking ip 
+
+```
+ashu-net1   1/1     Running   0          4s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  po -owide
+NAME        READY   STATUS    RESTARTS   AGE   IP              NODE      NOMINATED NODE   READINESS GATES
+ashu-net1   1/1     Running   0          44s   192.168.34.63   minion1   <none>           <none>
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  describe pod ashu-net1
+Name:             ashu-net1
+Namespace:        ashu-project
+Priority:         0
+Service Account:  default
+Node:             minion1/10.0.0.21
+Start Time:       Thu, 05 Jan 2023 06:43:58 +0000
+Labels:           run=ashu-net1
+Annotations:      cni.projectcalico.org/containerID: 5fe4f0652da68fae766f431c7243598cbc2548481e55f9dabe73b178b290f620
+                  cni.projectcalico.org/podIP: 192.168.34.63/32
+                  cni.projectcalico.org/podIPs: 192.168.34.63/32
+Status:           Running
+IP:               192.168.34.63
+```
+
+
+### checking container ip 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get po 
+NAME        READY   STATUS    RESTARTS   AGE
+ashu-net1   1/1     Running   0          2m4s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get po  -o wide
+NAME        READY   STATUS    RESTARTS   AGE    IP              NODE      NOMINATED NODE   READINESS GATES
+ashu-net1   1/1     Running   0          2m8s   192.168.34.63   minion1   <none>           <none>
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  exec -it ashu-net1  -- sh 
+/ # ifconfig 
+eth0      Link encap:Ethernet  HWaddr DA:B3:E6:10:2A:3C  
+          inet addr:192.168.34.63  Bcast:0.0.0.0  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:8980  Metric:1
+          RX packets:5 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:446 (446.0 B)  TX bytes:0 (0.0 B)
+
+```
 
 
