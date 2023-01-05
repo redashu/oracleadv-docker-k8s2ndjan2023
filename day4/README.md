@@ -686,6 +686,59 @@ clusterrolebinding.rbac.authorization.k8s.io/access created
 [ashu@ip-172-31-87-240 ashu-apps]$ 
 ```
 
+## iNtroduction to Helm 
+
+<img src="helm.png">
+
+### Installing helm in linux k8s client 
+
+```
+[root@ip-172-31-87-240 ~]# wget https://get.helm.sh/helm-v3.10.3-linux-amd64.tar.gz
+--2023-01-05 11:37:30--  https://get.helm.sh/helm-v3.10.3-linux-amd64.tar.gz
+Resolving get.helm.sh (get.helm.sh)... 152.195.19.97, 2606:2800:11f:1cb7:261b:1f9c:2074:3c
+Connecting to get.helm.sh (get.helm.sh)|152.195.19.97|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 14569235 (14M) [application/x-tar]
+Saving to: 'helm-v3.10.3-linux-amd64.tar.gz'
+
+100%[=======================================================================>] 14,569,235  19.4MB/s   in 0.7s   
+
+2023-01-05 11:37:31 (19.4 MB/s) - 'helm-v3.10.3-linux-amd64.tar.gz' saved [14569235/14569235]
+
+[root@ip-172-31-87-240 ~]# ls
+helm-v3.10.3-linux-amd64.tar.gz  labs
+[root@ip-172-31-87-240 ~]# tar xvzf helm-v3.10.3-linux-amd64.tar.gz 
+linux-amd64/
+linux-amd64/helm
+linux-amd64/LICENSE
+linux-amd64/README.md
+[root@ip-172-31-87-240 ~]# ls
+helm-v3.10.3-linux-amd64.tar.gz  labs  linux-amd64
+[root@ip-172-31-87-240 ~]# cd linux-amd64/
+[root@ip-172-31-87-240 linux-amd64]# ls
+LICENSE  README.md  helm
+[root@ip-172-31-87-240 linux-amd64]# mv helm  /usr/bin/
+[root@ip-172-31-87-240 linux-amd64]# 
+
+```
+
+### checking helm 
+
+```
+ashu@ip-172-31-87-240 ashu-apps]$ helm version 
+WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: /home/ashu/.kube/config
+WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: /home/ashu/.kube/config
+version.BuildInfo{Version:"v3.10.3", GitCommit:"835b7334cfe2e5e27870ab3ed4135f136eecc704", GitTreeState:"clean", GoVersion:"go1.18.9"}
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+[ashu@ip-172-31-87-240 ashu-apps]$ chmod  400 ~/.kube/config 
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+[ashu@ip-172-31-87-240 ashu-apps]$ helm version 
+version.BuildInfo{Version:"v3.10.3", GitCommit:"835b7334cfe2e5e27870ab3ed4135f136eecc704", GitTreeState:"clean", GoVersion:"go1.18.9"}
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+```
+
+
 
 
 
