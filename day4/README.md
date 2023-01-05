@@ -177,3 +177,25 @@ spec:
 status: {}
 
 ```
+
+### Scaling of POds 
+
+<img src="scale.png">
+
+### manul scaling of pod 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  deploy 
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-deploy1   1/1     1            1           69s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl scale  deployment  ashu-deploy1 --replicas=3
+deployment.apps/ashu-deploy1 scaled
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  po -owide
+NAME                           READY   STATUS    RESTARTS   AGE   IP                NODE      NOMINATED NODE   READINESS GATES
+ashu-deploy1-7d7d754b6-9jzn8   1/1     Running   0          9s    192.168.179.234   minion2   <none>           <none>
+ashu-deploy1-7d7d754b6-q4ghr   1/1     Running   0          91s   192.168.179.233   minion2   <none>           <none>
+ashu-deploy1-7d7d754b6-vbwsc   1/1     Running   0          9s    192.168.34.55     minion1   <none>           <none>
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+```
+
+
