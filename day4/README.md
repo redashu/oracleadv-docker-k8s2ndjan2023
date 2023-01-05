@@ -624,6 +624,67 @@ status:
   653  kubectl  -n ashuk8s1  exec ashupod111 -- ls /tmp
 ```
 
+### Dashboard in k8s 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+E0105 10:58:54.820555    7331 memcache.go:255] couldn't get resource list for metrics.k8s.io/v1beta1: the server is currently unable to handle the request
+E0105 10:58:54.987328    7331 memcache.go:106] couldn't get resource list for metrics.k8s.io/v1beta1: the server is currently unable to handle the request
+namespace/kubernetes-dashboard created
+serviceaccount/kubernetes-dashboard created
+service/kubernetes-dashboard created
+secret/kubernetes-dashboard-certs created
+secret/kubernetes-dashboard-csrf created
+secret/kubernetes-dashboard-key-holder created
+configmap/kubernetes-dashboard-settings created
+role.rbac.authorization.k8s.io/kubernetes-dashboard created
+clusterrole.rbac.authorization.k8s.io/kubernetes-dashboard created
+rolebinding.rbac.authorization.k8s.io/kubernetes-dashboard created
+clusterrolebinding.rbac.authorization.k8s.io/kubernetes-dashboard created
+deployment.apps/kubernetes-dashboard created
+service/dashboard-metrics-scraper created
+deployment.apps/dashboard-metrics-scraper created
+```
+
+### verify it 
+
+```
+ 505  kubectl  get  deploy -n kubernetes-dashboard
+  506  kubectl  get  svc  -n kubernetes-dashboard
+  507  kubectl  get  secret  -n kubernetes-dashboard
+```
+
+### change service from clusterIP to nodeport 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ kubectl  edit   svc kubernetes-dashboard  -n kubernetes-dashboard
+AME                        TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)         AGE
+dashboard-metrics-scraper   ClusterIP   10.111.94.182   <none>        8000/TCP        2m13s
+kubernetes-dashboard        NodePort    10.106.11.133   <none>        443:30922/TCP   2m15s
+```
+
+
+### after accessing it lets use token to login into dashboard 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ kubectl  get  secret  -n kubernetes-dashboard
+NAME                               TYPE                                  DATA   AGE
+default-token-nbzp4                kubernetes.io/service-account-token   3      4m27s
+kubernetes-dashboard-certs         Opaque                                0      4m27s
+kubernetes-dashboard-csrf          Opaque                                1      4m27s
+kubernetes-dashboard-key-holder    Opaque                                2      4m27s
+kubernetes-dashboard-token-67cd9   kubernetes.io/service-account-token   3      4m27s
+[ashu@ip-172-31-87-240 ashu-apps]$ kubectl describe   secret  kubernetes-dashboard-token-67cd9  -n kubernetes-dashboard
+
+```
+
+### giving full access to dashboard 
+
+```
+[ashu@ip-172-31-87-240 ashu-apps]$ kubectl create clusterrolebinding  access  --clusterrole=cluster-admin --serviceaccount=kubernetes-dashboard:kubernetes-dashboard
+clusterrolebinding.rbac.authorization.k8s.io/access created
+[ashu@ip-172-31-87-240 ashu-apps]$ 
+```
 
 
 
