@@ -355,5 +355,57 @@ lo        Link encap:Local Loopback
 [ashu@ip-172-31-87-240 k8s-resources]$ 
 ```
 
+## Introduction to Internal LB using service 
+
+<img src="svc.png">
+
+### type of services 
+
+
+<img src="stype.png">
+
+### deploy app
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl delete pods --all
+pod "ashu-net1" deleted
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl delete deployment --all
+No resources found
+[ashu@ip-172-31-87-240 k8s-resources]$ ls
+ashupod1.yaml  autopod.json  autopod.yaml  mydeploy.yaml  mysecret.yaml  nettest1.yaml  ocrdeploy.yaml  ocrpod.yaml
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl apply -f mydeploy.yaml 
+deployment.apps/ashu-deploy1 created
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get deploy 
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-deploy1   1/1     1            1           4s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  scale deployment ashu-deploy1 --replicas=2
+deployment.apps/ashu-deploy1 scaled
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get po -owide
+NAME                           READY   STATUS    RESTARTS   AGE   IP                NODE      NOMINATED NODE   READINESS GATES
+ashu-deploy1-7d7d754b6-9gvs8   1/1     Running   0          8s    192.168.34.11     minion1   <none>           <none>
+ashu-deploy1-7d7d754b6-f7424   1/1     Running   0          23s   192.168.179.248   minion2   <none>           <none>
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+
+```
+
+### creating nodeport service 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get deploy 
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-deploy1   2/2     2            2           72s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl expose  deployment  ashu-deploy1  --type NodePort --port 8080 --name ashulb1 --dry-run=client -o yaml  >nodeport.yaml 
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl apply -f nodeport.yaml 
+service/ashulb1 created
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  services
+NAME      TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+ashulb1   NodePort   10.103.193.222   <none>        8080:30757/TCP   5s
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+```
+
 
 
