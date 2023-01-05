@@ -561,6 +561,70 @@ NAME           REFERENCE                 TARGETS         MINPODS   MAXPODS   REP
 ashu-deploy1   Deployment/ashu-deploy1   <unknown>/70%   3         20        3          42s
 ```
 
+### multi Resouces in single YAML
+
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: ashuk8s1
+spec: {}
+status: {}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: ashuk8s1 
+  creationTimestamp: null
+  labels:
+    run: ashupod111
+  name: ashupod111
+spec:
+  containers:
+  - image: ubuntu
+    name: ashupod111
+    command: ['sleep','1000']
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: ashuk8s1 # namespace info 
+  creationTimestamp: null
+  labels:
+    app: ashusvc1
+  name: ashusvc1
+spec:
+  ports:
+  - name: 1234-80
+    port: 1234
+    protocol: TCP
+    targetPort: 80
+    nodePort: 31109 # choosing port 
+  selector:
+    app: ashusvc1
+  type: NodePort
+status:
+  loadBalancer: {}
+```
+
+### 
+
+```
+647  kubectl apply -f mytask.yaml 
+  648  kubectl  get svc -n ashuk8s1
+  649  ls
+  650  kubectl  get po -n ashuk8s1
+  651  kubectl  -n ashuk8s1  cp hpa.yaml  ashupod111:/tmp/
+  652  kubectl  -n ashuk8s1  exec ashupod111 - ls /tmp
+  653  kubectl  -n ashuk8s1  exec ashupod111 -- ls /tmp
+```
+
+
 
 
 
