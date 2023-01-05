@@ -144,3 +144,36 @@ ashu-deploy1-7d7d754b6-wvkbq   1/1     Running   0          4s
 [ashu@ip-172-31-87-240 k8s-resources]$ 
 ```
 
+### using secret in deployment file 
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-deploy1
+  name: ashu-deploy1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashu-deploy1
+  strategy: {}
+  template: # this is of pod 
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashu-deploy1
+    spec:
+      imagePullSecrets:
+      - name: ashu-reg-secret
+      containers:
+      - image: phx.ocir.io/ax8yv0ztaclr/newapp:v1
+        name: newapp
+        ports:
+        - containerPort: 8080
+        resources: {}
+status: {}
+
+```
