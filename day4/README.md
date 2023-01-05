@@ -285,5 +285,75 @@ eth0      Link encap:Ethernet  HWaddr DA:B3:E6:10:2A:3C
           RX bytes:446 (446.0 B)  TX bytes:0 (0.0 B)
 
 ```
+### multi container pod 
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: ashu-net1
+  name: ashu-net1
+spec:
+  containers:
+  - image: alpine
+    name: ashuc1
+    command: ['sleep','10000']
+  - image: alpine
+    name: ashu-net1
+    command: ['sleep','1000']
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+```
+
+### deploy it 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl replace -f nettest1.yaml --force
+pod "ashu-net1" deleted
+pod/ashu-net1 replaced
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  po 
+NAME        READY   STATUS    RESTARTS   AGE
+ashu-net1   2/2     Running   0          5s
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+```
+
+### access 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl replace -f nettest1.yaml --force
+pod "ashu-net1" deleted
+pod/ashu-net1 replaced
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  po 
+NAME        READY   STATUS    RESTARTS   AGE
+ashu-net1   2/2     Running   0          5s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  exec -it  ashu-net1 -- sh 
+Defaulted container "ashuc1" out of: ashuc1, ashu-net1
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  exec -it  ashu-net1 -c ashu-net1 -- sh 
+/ # ifconfig 
+eth0      Link encap:Ethernet  HWaddr 86:D8:75:F1:31:EB  
+          inet addr:192.168.34.5  Bcast:0.0.0.0  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:8980  Metric:1
+          RX packets:5 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:446 (446.0 B)  TX bytes:0 (0.0 B)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+/ # 
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+```
+
 
 
