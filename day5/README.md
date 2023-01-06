@@ -448,3 +448,17 @@ ashu-web-app   1/1     1            1           32s
 
 ### creating service 
 
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  expose deployment ashu-web-app  --type NodePort --port 80 --name ashulb7 --dry-run=client -o yaml  >uisvc.yaml
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  apply -f uisvc.yaml 
+service/ashulb7 created
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get  svc
+NAME        TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+ashu-svc1   ClusterIP   10.105.96.31    <none>        3306/TCP       16m
+ashulb7     NodePort    10.110.24.247   <none>        80:30841/TCP   4s
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+
+```
+
+
+
