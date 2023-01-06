@@ -524,4 +524,130 @@ poddisruptionbudgets              pdb          policy/v1                        
 podsecuritypolicies               psp          policy/v1beta1                         false        PodSecurityPolicy
 ```
 
+## Helm Demo 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ helm repo ls
+Error: no repositories to show
+[ashu@ip-172-31-87-240 k8s-resources]$ helm repo add ashu-repo https://charts.bitnami.com/bitnami 
+"ashu-repo" has been added to your repositories
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ helm repo ls
+NAME            URL                               
+ashu-repo       https://charts.bitnami.com/bitnami
+[ashu@ip-172-31-87-240 k8s-resources]$ helm search repo nginx 
+NAME                                    CHART VERSION   APP VERSION     DESCRIPTION                                       
+ashu-repo/nginx                         13.2.21         1.23.3          NGINX Open Source is a web server that can be a...
+ashu-repo/nginx-ingress-controller      9.3.24          1.6.0           NGINX Ingress Controller is an Ingress controll...
+ashu-repo/nginx-intel                   2.1.13          0.4.9           NGINX Open Source for Intel is a lightweight se...
+[ashu@ip-172-31-87-240 k8s-resources]$ helm search repo mysql 
+NAME                            CHART VERSION   APP VERSION     DESCRIPTION                                       
+ashu-repo/mysql                 9.4.5           8.0.31          MySQL is a fast, reliable, scalable, and easy t...
+ashu-repo/phpmyadmin            10.3.8          5.2.0           phpMyAdmin is a free software tool written in P...
+ashu-repo/mariadb               11.4.2          10.6.11         MariaDB is an open source, community-developed ...
+ashu-repo/mariadb-galera        7.4.10          10.6.11         MariaDB Galera is a multi-primary database clus...
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+```
+
+### deploy first helm chart 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ helm install ashu-webapp ashu-repo/nginx  
+NAME: ashu-webapp
+LAST DEPLOYED: Fri Jan  6 11:39:55 2023
+NAMESPACE: ashu-project
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+CHART NAME: nginx
+CHART VERSION: 13.2.21
+APP VERSION: 1.23.3
+
+** Please be patient while the chart is being deployed **
+NGINX can be accessed through the following DNS name from within your cluster:
+
+    ashu-webapp-nginx.ashu-project.svc.cluster.local (port 80)
+
+To access NGINX from outside the cluster, follow the steps below:
+
+1. Get the NGINX URL by running these commands:
+
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+        Watch the status with: 'kubectl get svc --namespace ashu-project -w ashu-webapp-nginx'
+
+    export SERVICE_PORT=$(kubectl get --namespace ashu-project -o jsonpath="{.spec.ports[0].port}" services ashu-webapp-nginx)
+    export SERVICE_IP=$(kubectl get svc --namespace ashu-project ashu-webapp-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+    echo "http://${SERVICE_IP}:${SERVICE_PORT}"
+```
+
+### uninstall 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ helm ls
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
+ashu-webapp     ashu-project    1               2023-01-06 11:39:55.563773397 +0000 UTC deployed        nginx-13.2.21   1.23.3     
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   get  deploy 
+NAME                READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-webapp-nginx   1/1     1            1           53s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get svc
+NAME                TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+ashu-webapp-nginx   LoadBalancer   10.110.108.234   <pending>     80:32255/TCP   59s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get hpa
+No resources found in ashu-project namespace.
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ helm uninstall ashu-webapp
+release "ashu-webapp" uninstalled
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+```
+
+### pulling charts 
+
+```
+ 837  helm pull  ashu-repo/nginx  
+  838  ls
+  839  tar xvzf nginx-13.2.21.tgz 
+  840  history 
+[ashu@ip-172-31-87-240 k8s-resources]$ ls
+asdhupdb.yaml          autopod.json  dbsec.yaml  dsmon.yaml     mysecret.yaml  nginx              ocrdeploy.yaml  uisvc.yaml
+ashu-app-ingress.yaml  autopod.yaml  dbsvc.yaml  hpa.yaml       mytask.yaml    nginx-13.2.21.tgz  ocrpod.yaml     webui.yaml
+ashupod1.yaml          db1.yaml      db.yaml     mydeploy.yaml  nettest1.yaml  nodeport.yaml      ok.yaml
+[ashu@ip-172-31-87-240 k8s-resources]$ cd nginx/
+[ashu@ip-172-31-87-240 nginx]$ ls
+Chart.lock  charts  Chart.yaml  README.md  templates  values.schema.json  values.yaml
+[ashu@ip-172-31-87-240 nginx]$ 
+[ashu@ip-172-31-87-240 nginx]$ 
+[ashu@ip-172-31-87-240 nginx]$ ls  templates/
+deployment.yaml  health-ingress.yaml  hpa.yaml      NOTES.txt  prometheusrules.yaml         serviceaccount.yaml  svc.yaml
+extra-list.yaml  _helpers.tpl         ingress.yaml  pdb.yaml   server-block-configmap.yaml  servicemonitor.yaml  tls-secrets.yaml
+[ashu@ip-172-31-87-240 nginx]$ 
+[ashu@ip-172-31-87-240 nginx]$ 
+```
+
+### config file with all restriction 
+
+```
+apiVersion: v1
+clusters:
+- name: ashu-k8s-cluster
+  cluster:
+    server: https://158.101.3.169:6443
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMvakNDQWVhZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRJek1ERXdOREE0TURZMU1Gb1hEVE16TURFd01UQTRNRFkxTUZvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTDIwCnlxK2JCVjFtWk4vcUoxdGp3czBpZm5iNDI4L1NxUjV0VTRyaGtHQ0VReDUyMmxrRFI5Nko5cXNkUXc2Q3FVejQKZUQ5Ty9VSUt6bHU0V0tGdGMvVE9kaVJuR29xYThkeGI4clJIRHVsRDU2U1FabE1hdEpsMjJmU2d3d2pFcDNONgpLRmN1WHV6SFNseWtWZEVtcmk2dVl0ZEZSSXl6bFZVMDZxSm5RbWcvY0RhOTl4NWw5aDB1di9zWDZDWHozSEJBCjFHRXRUWnpLRDY3dE53Zk8yb0J1U0VLSUFpbWEycWU5V1pxdS9aR3hGeFNOMmhFbVlIdldGcGovWUxtaStLVTQKNWhzbW0yR0lHa2FkZ0l1M2FjN1FyMlBFU2FiT2pnTkJHT1diTEJwUlFmOUVVb3lBeUhGaDJJY3UxZlFEZGhIeQpSY05vZFRNYkFsaVpreVpBZC9jQ0F3RUFBYU5aTUZjd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZMUmd1NEphenlMZFVMVUcwZjA1K1E1eWpvOXFNQlVHQTFVZEVRUU8KTUF5Q0NtdDFZbVZ5Ym1WMFpYTXdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBQmJPTlh1cmgyUVZLRWdiMERIRgpWdFcrV0dHVVBLc2F5T2o4QUNnSk1iQ0tMTU1tb3hFWUllRUp1cU5QdnlWNjNrMEkrNTMrWWVYUkxHSmRxSWtUCkFTc2NpcU5uZE1xZS9WR3JKZHpnQWhCNkdkSnhpZmhLZHdJQmRMdFNRbVhQNVgvZ0JtaGc3RURWb2tBdGlHcncKYUVTK0U0VVlYbHhRTTd0OUR5RVZpTXFlZ3ZnNEtrWlBCR1FucjdxbGtmWERGVWsrelNQTlNRVFdCYVNaSHlCTgo5T1J5MlNFNGp4Ukd3NlU2VU5VYXEvQXZ1RzRFNU5MSUlEdS9MTTFZZ0VPVlZQTVZrRFhlVHJtOTkzRVB0L01QCnI5OStTY25DT3lseFB2SURwRkgxQzNSaVl4WXZLaldRb2MwZEQvd0NWaldGU3VCR1U5MTAyTkx3NVZYZUNmTTYKUW04PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+contexts:
+- name: dev-env
+  context:
+    cluster: ashu-k8s-cluster
+    namespace: test-access 
+    user: default 
+current-context: dev-env
+users:
+- name: default
+  user:
+    token: eyJhbGciOiJSUzI1NiIsImtpZCI6IlNCdXBndDRjdHh0U19aakhuc2xWZklHMFR5XzA5N2V1ZmdsQ2FnM1E2QzgifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJ0ZXN0LWFjY2VzcyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZWZhdWx0LXRva2VuLW1yNW5jIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImRlZmF1bHQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiIzYWJhOTRkYi1jYjQyLTQwMTAtYWI3YS1lNjUwYzNkMGQwZDUiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6dGVzdC1hY2Nlc3M6ZGVmYXVsdCJ9.IvPwg8gMcXVEPfubI6r9qG0sLYBtIcubuy1WXEjEJBB296P0cmrFhFFkBgdZXJTmRYT7exBzIjSoJpq_0voxsvIYim9h1i86hZkvL-rJW0Xs9r747Z5HmYRNZLhYoUPAzr0J_XZDm9yCHL5jBQhe_J6JWJrjs9ZT6vTX71YAKsMEuvAw-XKxzoq_XJ3zpKc77zWqkCvN0MKzBCIV9P3VJIvCqS5OuQJFFmenEQ3ioq7t-EBH7i8J35S69LajZEQR4qoAeUhRnJjAVnf_I9_K4nYll3fFLFD7yik-BCAwq6HJ_a-feyle2MZ6jxkZLxD6GOxuTmqEj1-F-QwEMKTUIA
+```
+
+
 
