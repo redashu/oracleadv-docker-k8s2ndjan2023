@@ -207,4 +207,41 @@ thexyzcomp@cloudshell:ashu (us-phoenix-1)$
 ```
 
 
+### creating ingress rule 
 
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ashu-app-ingress-rule # name of ingress rule 
+  namespace: ashu-app # adding namespace
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx # change class name to nginx 
+  rules:
+  - host: japur.ashutoshh.in # my app domain name 
+    http:
+      paths:
+      - path: / # home page of app 
+        pathType: Prefix
+        backend:
+          service:
+            name: ashulb007
+            port:
+              number: 80
+
+```
+
+### create it 
+
+```
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ vim  ingress-rule.yaml 
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl apply -f ingress-rule.yaml  
+ingress.networking.k8s.io/ashu-app-ingress-rule created
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl get ingress -n ashu-app
+NAME                    CLASS   HOSTS                ADDRESS   PORTS   AGE
+ashu-app-ingress-rule   nginx   japur.ashutoshh.in             80      11s
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ 
+
+```
