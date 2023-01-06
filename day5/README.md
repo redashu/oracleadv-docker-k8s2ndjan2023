@@ -114,3 +114,57 @@ ashulb2   LoadBalancer   10.96.139.192   129.153.123.215   80:32239/TCP   56s
 thexyzcomp@cloudshell:ashu (us-phoenix-1)$ 
 ```
 
+### Nginx ingress controller deploy 
+
+```
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+namespace/ingress-nginx created
+serviceaccount/ingress-nginx created
+serviceaccount/ingress-nginx-admission created
+role.rbac.authorization.k8s.io/ingress-nginx created
+role.rbac.authorization.k8s.io/ingress-nginx-admission created
+clusterrole.rbac.authorization.k8s.io/ingress-nginx created
+clusterrole.rbac.authorization.k8s.io/ingress-nginx-admission created
+rolebinding.rbac.authorization.k8s.io/ingress-nginx created
+rolebinding.rbac.authorization.k8s.io/ingress-nginx-admission created
+clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx created
+clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx-admission created
+configmap/ingress-nginx-controller created
+service/ingress-nginx-controller created
+service/ingress-nginx-controller-admission created
+deployment.apps/ingress-nginx-controller created
+job.batch/ingress-nginx-admission-create created
+job.batch/ingress-nginx-admission-patch created
+ingressclass.networking.k8s.io/nginx created
+validatingwebhookconfiguration.admissionregistration.k8s.io/ingress-nginx-admission created
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl get ns
+NAME              STATUS   AGE
+anand-app         Active   29m
+ankita-ns         Active   29m
+ashu-app          Active   31m
+default           Active   76m
+ingress-nginx     Active   15s
+kube-node-lease   Active   76m
+```
+
+### Only external Lb we need is for Ingress 
+
+```
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl  get deploy -n ingress-nginx
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+ingress-nginx-controller   1/1     1            1           94s
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl  get po  -n ingress-nginx
+NAME                                        READY   STATUS      RESTARTS   AGE
+ingress-nginx-admission-create-q57pp        0/1     Completed   0          106s
+ingress-nginx-admission-patch-jpdcr         0/1     Completed   1          106s
+ingress-nginx-controller-7d5fb757db-f2ctk   1/1     Running     0          106s
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl  get svc  -n ingress-nginx
+NAME                                 TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                      AGE
+ingress-nginx-controller             LoadBalancer   10.96.23.252   129.153.87.217   80:32338/TCP,443:30631/TCP   113s
+ingress-nginx-controller-admission   ClusterIP      10.96.182.80   <none>           443/TCP                      113s
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ 
+
+```
+
+
+
