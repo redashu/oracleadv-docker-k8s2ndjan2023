@@ -245,3 +245,58 @@ ashu-app-ingress-rule   nginx   japur.ashutoshh.in             80      11s
 thexyzcomp@cloudshell:ashu (us-phoenix-1)$ 
 
 ```
+
+### Storage concept in k8s 
+
+<img src="st.png">
+
+### creating Database deployment 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   create  deployment  ashu-db --image=mysql:5.6  --port 3306 --dry-run=client -o yaml >db.yaml 
+```
+
+### MYSQL deploy file with storage 
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-db
+  name: ashu-db # name of deployment 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashu-db
+  strategy: {}
+  template: # pod template
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashu-db
+    spec:
+      volumes: # to create volume 
+      - name: ashudb-vol1
+        hostPath: # type of vol to pic storage from Minion Node
+          path: /mnt/ashu-db-data
+          type: DirectoryOrCreate 
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        ports:
+        - containerPort: 3306
+        resources: {}
+        env: # putting env for setting root password of db 
+        - name: MYSQL_ROOT_PASSWORD
+          value: "Oracle@098"
+        volumeMounts: # attaching volume to container 
+        - name: ashudb-vol1
+          mountPath: /var/lib/mysql/
+status: {}
+
+```
+
+
