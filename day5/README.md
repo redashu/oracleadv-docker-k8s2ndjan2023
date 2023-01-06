@@ -166,5 +166,45 @@ thexyzcomp@cloudshell:ashu (us-phoenix-1)$
 
 ```
 
+### creating deployment and scale it 
+
+```
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl get deploy -n ashu-app
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-dep1   1/1     1            1           32m
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ 
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl -n ashu-app scale deploy ashu-dep1 --replicas=3
+deployment.apps/ashu-dep1 scaled
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl get deploy -n ashu-app
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-dep1   3/3     3            3           32m
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl get po -o wide -n ashu-app
+NAME                         READY   STATUS    RESTARTS   AGE   IP             NODE          NOMINATED NODE   READINESS GATES
+ashu-dep1-6548d55bd7-7v45x   1/1     Running   0          16s   10.244.0.135   10.0.10.239   <none>           <none>
+ashu-dep1-6548d55bd7-t6cnt   1/1     Running   0          33m   10.244.1.3     10.0.10.90    <none>           <none>
+ashu-dep1-6548d55bd7-z25v5   1/1     Running   0          17s   10.244.0.7     10.0.10.46    <none>           <none>
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl get no
+NAME          STATUS   ROLES   AGE   VERSION
+10.0.10.239   Ready    node    50m   v1.23.4
+10.0.10.46    Ready    node    50m   v1.23.4
+10.0.10.90    Ready    node    50m   v1.23.4
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ 
+```
+
+### creating clusterIP service 
+
+```
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl get deploy -n ashu-app
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-dep1   3/3     3            3           34m
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl expose deploy ashu-dep1 --type ClusterIP --port 80 --name ashulb007 --namespace ashu-app --dry-run=client -o yaml >clustrip.yaml 
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl apply -f clustrip.yaml 
+service/ashulb007 created
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl get svc -n ashu-app
+NAME        TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+ashulb007   ClusterIP   10.96.248.182   <none>        80/TCP    9s
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ 
+```
+
 
 
