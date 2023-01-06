@@ -298,5 +298,85 @@ spec:
 status: {}
 
 ```
+### creating secret to store db password 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   create  secret  generic  ashu-db-sec  --from-literal  ashudbpass="Oracle@098" --dry-run=client  -o yaml >dbsec.yaml 
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  apply -f dbsec.yaml 
+secret/ashu-db-sec created
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   get secret 
+NAME                  TYPE                                  DATA   AGE
+ashu-db-sec           Opaque                                1      4s
+```
+
+### secret info 
+
+<img src="sec.png">
+
+### final Deployment of MYSQL yaml 
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-db
+  name: ashu-db # name of deployment 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashu-db
+  strategy: {}
+  template: # pod template
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashu-db
+    spec:
+      volumes: # to create volume 
+      - name: ashudb-vol1
+        hostPath: # type of vol to pic storage from Minion Node
+          path: /mnt/ashu-db-data
+          type: DirectoryOrCreate 
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        ports:
+        - containerPort: 3306
+        resources: {}
+        env: # putting env for setting root password of db 
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ashu-db-sec
+              key: ashudbpass
+        volumeMounts: # attaching volume to container 
+        - name: ashudb-vol1
+          mountPath: /var/lib/mysql/
+status: {}
+
+```
+
+### deploy it 
+
+```
+ashu@ip-172-31-87-240 k8s-resources]$ kubectl  apply -f db.yaml 
+deployment.apps/ashu-db created
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get secret 
+NAME                  TYPE                                  DATA   AGE
+ashu-db-sec           Opaque                                1      3m51s
+ashu-reg-secret       kubernetes.io/dockerconfigjson        1      27h
+default-token-xnpnd   kubernetes.io/service-account-token   3      28h
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get deploy 
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-db   1/1     1            1           9s
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   get pods
+NAME                      READY   STATUS    RESTARTS   AGE
+ashu-db-84b5d599d-n96fz   1/1     Running   0          14s
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+```
+
 
 
