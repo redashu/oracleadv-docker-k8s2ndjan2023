@@ -460,5 +460,68 @@ ashulb7     NodePort    10.110.24.247   <none>        80:30841/TCP   4s
 
 ```
 
+### DS 
+
+```
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ashu-mon
+  labels:
+    k8s-app: fluentd-logging
+spec:
+  selector:
+    matchLabels:
+      name: fluentd-elasticsearch
+  template:
+    metadata:
+      labels:
+        name: fluentd-elasticsearch
+    spec:
+      containers:
+      - name: fluentd-elasticsearch
+        image: portainer/portainer
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/run/docker.sock
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: varlog
+        hostPath:
+          path: /var/run/docker.sock
+          type: Socket
+```
+
+### PDB --demo 
+
+```
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: ashu-app-budget
+spec:
+  minAvailable: 5 
+  selector: # target these pods having this lable 
+    matchLabels:
+      app: ashu-deploy1
+```
+
+### checking api 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   api-resources  |  grep -i pod 
+pods                              po           v1                                     true         Pod
+podtemplates                                   v1                                     true         PodTemplate
+horizontalpodautoscalers          hpa          autoscaling/v2                         true         HorizontalPodAutoscaler
+pods                                           metrics.k8s.io/v1beta1                 true         PodMetrics
+poddisruptionbudgets              pdb          policy/v1                              true         PodDisruptionBudget
+podsecuritypolicies               psp          policy/v1beta1                         false        PodSecurityPolicy
+```
 
 
