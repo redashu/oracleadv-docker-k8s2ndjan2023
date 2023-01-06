@@ -52,3 +52,9 @@ kubeadm token create --print-join-command
 ```
  kubeadm join 10.0.0.3:6443 --toke
 ```
+
+### Ingress in k8s 
+
+<img src="ingress.png">
+
+
