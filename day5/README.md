@@ -649,5 +649,21 @@ users:
     token: eyJhbGciOiJSUzI1NiIsImtpZCI6IlNCdXBndDRjdHh0U19aakhuc2xWZklHMFR5XzA5N2V1ZmdsQ2FnM1E2QzgifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJ0ZXN0LWFjY2VzcyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZWZhdWx0LXRva2VuLW1yNW5jIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImRlZmF1bHQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiIzYWJhOTRkYi1jYjQyLTQwMTAtYWI3YS1lNjUwYzNkMGQwZDUiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6dGVzdC1hY2Nlc3M6ZGVmYXVsdCJ9.IvPwg8gMcXVEPfubI6r9qG0sLYBtIcubuy1WXEjEJBB296P0cmrFhFFkBgdZXJTmRYT7exBzIjSoJpq_0voxsvIYim9h1i86hZkvL-rJW0Xs9r747Z5HmYRNZLhYoUPAzr0J_XZDm9yCHL5jBQhe_J6JWJrjs9ZT6vTX71YAKsMEuvAw-XKxzoq_XJ3zpKc77zWqkCvN0MKzBCIV9P3VJIvCqS5OuQJFFmenEQ3ioq7t-EBH7i8J35S69LajZEQR4qoAeUhRnJjAVnf_I9_K4nYll3fFLFD7yik-BCAwq6HJ_a-feyle2MZ6jxkZLxD6GOxuTmqEj1-F-QwEMKTUIA
 ```
 
+### user role and rolebinding 
+
+```
+ 882  kubectl  create role  test-pod -h
+  883  kubectl create role foo --verb=get,list,watch --resource=pods -n test-access
+  884  kubectl  create  rolebinding -h
+  885  kubectl  create  rolebinding  bind1  --role=foo --serviceaccount=test-access:default -n test-access
+  886  history 
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl create role foo1 --verb=get,list,watch --resource=service -n test-access
+role.rbac.authorization.k8s.io/foo1 created
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  create  rolebinding  bind2  --role=foo1  --serviceaccount=test-access:default -n test-access
+rolebinding.rbac.authorization.k8s.io/bind2 created
+```
+
+
 
 
