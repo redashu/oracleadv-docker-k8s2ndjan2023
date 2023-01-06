@@ -378,5 +378,73 @@ ashu-db-84b5d599d-n96fz   1/1     Running   0          14s
 [ashu@ip-172-31-87-240 k8s-resources]$ 
 ```
 
+### creating clusterIP type service 
 
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   get  deploy 
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-db   1/1     1            1           21m
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  expose deploy  ashu-db --name ashu-svc1 --port 3306 --dry-run=client -o yaml >dbsvc.yaml 
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  apply -f dbsvc.yaml 
+service/ashu-svc1 created
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl   get  svc
+NAME        TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+ashu-svc1   ClusterIP   10.105.96.31   <none>        3306/TCP   4s
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+
+```
+
+### webUI yaml
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-web-app
+  name: ashu-web-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashu-web-app
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashu-web-app
+    spec:
+      containers:
+      - image: wordpress:4.8-apache
+        name: wordpress
+        ports:
+        - containerPort: 80
+        resources: {}
+        env: 
+        - name: WORDPRESS_DB_HOST # endpoint of db 
+          value: ashu-svc1 # service name of DB deployment 
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom: # taking value from secret 
+            secretKeyRef:
+              name: ashu-db-sec
+              key: ashudbpass  
+status: {}
+
+```
+
+### deploy it 
+
+```
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  apply -f webui.yaml 
+deployment.apps/ashu-web-app created
+[ashu@ip-172-31-87-240 k8s-resources]$ kubectl  get deploy 
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-db        1/1     1            1           34m
+ashu-web-app   1/1     1            1           32s
+[ashu@ip-172-31-87-240 k8s-resources]$ 
+```
+
+### creating service 
 
