@@ -61,4 +61,56 @@ kubeadm token create --print-join-command
 
 <img src="oke1.png">
 
+### demo of external LB in OKE 
+
+```
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ ls
+ns.yaml
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl create deployment ashu-dep1 --image=docker.io/dockerashu/webui:oraclev1 --port 80 --namespace=ashu-app --dry-run=client -o yaml >deploy.yaml
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl apply -f deploy.yaml 
+deployment.apps/ashu-dep1 created
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl get deploy 
+No resources found in default namespace.
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl get deploy  -n ashu-app
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-dep1   1/1     1            1           16s
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ 
+
+```
+
+### creating service 
+
+```
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl  get deploy -n ashu-app
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-dep1   1/1     1            1           2m21s
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ 
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ 
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl expose deploy ashu-dep1 --type NodePort --port 80 --name ashulb1 --namespace=ashu-app --dry-run=client -o yaml >np.yaml 
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ ls
+deploy.yaml  np.yaml  ns.yaml
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl apply -f np.yaml 
+service/ashulb1 created
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl get svc -n ashu-app
+NAME      TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+ashulb1   NodePort   10.96.42.240   <none>        80:31750/TCP   8s
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ 
+
+
+```
+
+### creating Lb type service 
+
+```
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl expose deploy ashu-dep1 --type LoadBalancer --port 80 --name ashulb2 --namespace=ashu-app --dry-run=client -o yaml >lb.yaml 
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl apply -f lb.yaml 
+service/ashulb2 created
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl get svc -n ashu-app
+NAME      TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+ashulb2   LoadBalancer   10.96.139.192   <pending>     80:32239/TCP   9s
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ kubectl get svc -n ashu-app
+NAME      TYPE           CLUSTER-IP      EXTERNAL-IP       PORT(S)        AGE
+ashulb2   LoadBalancer   10.96.139.192   129.153.123.215   80:32239/TCP   56s
+thexyzcomp@cloudshell:ashu (us-phoenix-1)$ 
+```
 
