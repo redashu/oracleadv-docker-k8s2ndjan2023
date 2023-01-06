@@ -57,4 +57,8 @@ kubeadm token create --print-join-command
 
 <img src="ingress.png">
 
+## Nodepool in cloud controlled k8s -- OKE 
+
+<img src="oke1.png">
+
 
